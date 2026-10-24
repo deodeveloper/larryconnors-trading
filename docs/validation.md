@@ -1,5 +1,14 @@
 # Validation record
 
+## Warm-up coverage fix
+
+52 tests passed, including six new coverage cases: a 237-session unavailable
+leading prefix, cache reuse, the 300-session minimum boundary, internal warm-up
+gaps, backtest gaps and missing final sessions. The clean-notebook packaging
+check was excluded because the user has saved execution outputs in their HPE
+notebook; that notebook was preserved unchanged. Validation used mocked Alpaca
+responses; no authenticated market-data request was made for this fix.
+
 ## Local Jupyter environment
 
 Created a project-local `.venv` using CPython 3.12.14 on macOS arm64, with

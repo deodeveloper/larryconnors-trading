@@ -251,3 +251,52 @@ def test_notebook_strategy_names_are_book_headings_not_nested_rule_numbers():
     assert mapping["short_term.cumulative"]["rules"].startswith("2. Cumulative RSI")
     assert "35" in mapping["short_term.cumulative"]["rules"]
     assert "50" in mapping["short_term.cumulative"]["rules"]
+
+
+class TruncatedHistoryClient(FakeClient):
+    def __init__(self, leading=237, gap=None, trailing=0):
+        super().__init__()
+        self.leading, self.gap, self.trailing = leading, gap, trailing
+
+    def get_stock_bars(self, request):
+        response = super().get_stock_bars(request)
+        frame = response.df.iloc[self.leading:]
+        if self.trailing:
+            frame = frame.iloc[:-self.trailing]
+        if self.gap is not None:
+            frame = frame.drop(frame.index[self.gap])
+        return SimpleNamespace(df=frame)
+
+
+def test_unavailable_excess_leading_warmup_is_reported_and_cached(tmp_path):
+    client = TruncatedHistoryClient()
+    data = AlpacaDailyData(client, tmp_path)
+    bars, quality = data.load("SPY", "2022-01-03", "2023-12-29")
+    assert quality["available_warmup_sessions"] == 363
+    assert len(quality["unavailable_leading_sessions"]) == 237
+    assert not quality["missing_sessions"]
+    assert bars.index.min().date().isoformat() == quality["actual_data_start"]
+    cached, cached_quality = data.load("SPY", "2022-01-03", "2023-12-29")
+    cached.index = cached.index.as_unit(bars.index.unit)
+    pd.testing.assert_frame_equal(bars, cached, check_freq=False)
+    assert cached_quality == quality
+    assert len(client.requests) == 1
+
+
+@pytest.mark.parametrize("leading,allowed", [(300, True), (301, False)])
+def test_minimum_available_warmup_boundary(tmp_path, leading, allowed):
+    data = AlpacaDailyData(TruncatedHistoryClient(leading), tmp_path)
+    if allowed:
+        _, quality = data.load("SPY", "2022-01-03", "2023-12-29")
+        assert quality["available_warmup_sessions"] == 300
+    else:
+        with pytest.raises(ValueError, match="insufficient warm-up.*299"):
+            data.load("SPY", "2022-01-03", "2023-12-29")
+
+
+@pytest.mark.parametrize("gap,trailing", [(20, 0), (400, 0), (None, 1)])
+def test_gaps_in_warmup_test_period_and_missing_tail_still_fail(tmp_path, gap, trailing):
+    data = AlpacaDailyData(TruncatedHistoryClient(gap=gap, trailing=trailing), tmp_path)
+    with pytest.raises(ValueError, match="incomplete history.*first missing dates"):
+        data.load("SPY", "2022-01-03", "2023-12-29")
+    assert not list(tmp_path.glob("*.csv"))

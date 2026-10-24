@@ -65,3 +65,20 @@ clear skipped row. Terror Gaps remains blocked. No index or ticker proxy is sile
 substituted. Short research explicitly declares borrow availability and rate in
 Setup. Source-close uses idealized same-close fills; next-open is a timing variant.
 For full data, timing, corporate-action and metric conventions see methodology.md.
+
+
+## History coverage and warm-up
+
+The SDK requests a 600-session warm-up buffer. At least 300 complete sessions
+before your backtest start are required, covering the implemented indicators,
+including the nested 252-day high / 20-day window. If the feed begins later than
+the requested buffer, an unavailable leading prefix is accepted only when that
+minimum remains. No bars are filled and the backtest start is unchanged.
+The exported data-quality record lists the actual first bar, available warm-up
+count and every unavailable leading session. Internal gaps, missing backtest
+sessions and insufficient warm-up still fail with date-specific diagnostics.
+
+Alpaca [explains that IEX history begins in 2020 and SIP history in 2016](https://forum.alpaca.markets/t/cannot-get-historical-bar-data-before-2020/12415).
+Feeds are never switched automatically. After updating the package, restart the
+Jupyter kernel and rerun Setup so Python loads the updated loader. Use an end
+date with completed daily bars; today's session may not yet be available.

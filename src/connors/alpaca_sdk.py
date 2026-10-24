@@ -162,10 +162,43 @@ class AlpacaDailyData:
                 (bars.index >= pd.Timestamp(first)) & (bars.index <= end),
                 ["open", "high", "low", "close", "volume"],
             ].sort_index()
-        quality = validate(bars, first, str(end.date()))
+        # 600 sessions is a download buffer, not an indicator requirement.
+        # 300 prior sessions covers SMA200, nested 252-day high + 20-day
+        # windows (271 observations), and the fixed ConnorsRSI lookbacks.
+        # Only an unavailable leading prefix may be omitted; never bridge gaps.
+        requested_quality = validate(bars, first, str(end.date()))
+        if bars.empty:
+            raise ValueError(f"No Alpaca bars for {symbol} in the requested range")
+        available_start = bars.index.min()
+        quality = validate(bars, str(available_start.date()), str(end.date()))
+        prior_sessions = int((bars.index < start).sum())
+        leading_missing = [
+            day for day in requested_quality["missing_sessions"]
+            if pd.Timestamp(day) < available_start
+        ]
+        quality.update(
+            requested_warmup_sessions=warmup_sessions,
+            available_warmup_sessions=prior_sessions,
+            minimum_warmup_sessions=300,
+            unavailable_leading_sessions=leading_missing,
+            actual_data_start=str(available_start.date()),
+        )
+        if prior_sessions < 300:
+            raise ValueError(
+                f"{symbol}: insufficient warm-up on {feed}: {prior_sessions} prior "
+                f"sessions available; at least 300 required. First bar: "
+                f"{available_start.date()}. Choose a later backtest start or an "
+                "explicitly selected feed with earlier history; prices are not filled."
+            )
         if quality["missing_sessions"] or quality["non_sessions"]:
             raise ValueError(
-                f"{symbol}: incomplete history ({len(quality['missing_sessions'])} missing sessions, including warm-up). Choose a later start or another feed; prices are not filled."
+                f"{symbol}: incomplete history on {feed}: "
+                f"{len(quality['missing_sessions'])} missing sessions within "
+                f"{available_start.date()} through {end.date()} "
+                f"(first missing dates: {quality['missing_sessions'][:5]}); "
+                f"{len(quality['non_sessions'])} non-session bars. "
+                "Choose completed historical dates, retry with refresh=True, or "
+                "explicitly select another feed; prices are not filled."
             )
         if not path.exists() or refresh:
             self.cache.mkdir(parents=True, exist_ok=True)
