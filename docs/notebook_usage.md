@@ -20,6 +20,10 @@ strategy execution cells.
    `strategy_start_date`, `strategy_end_date`, direction and allocation as needed.
 5. Read the per-ticker charts and the book performance matrix at the end.
 
+All generated charts use a dark theme, including vectorbt trade/P&L plots and
+exported HTML reports. After a package update, restart the kernel and rerun the
+cells to regenerate existing chart outputs.
+
 ```python
 results["rsi_spy"] = plot_all_stocks_pnl_charts(
     ["spy"], start_date, end_date,

@@ -3,6 +3,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import plotly.express as px
+from .plotting import dark_theme
 
 def episodes(orders):
     rows=[]
@@ -65,9 +66,9 @@ def export(result,path,quality=None):
     result.orders.to_csv(out/'orders.csv',index=False);trades.to_csv(out/'trades.csv',index=False);curves.to_csv(out/'curves.csv');pd.DataFrame(per).to_csv(out/'per_symbol.csv',index=False)
     payload=dict(metrics=stats,config=result.config,parameters=result.parameters,source=result.spec,data_quality=quality or {},conventions=dict(sharpe='252 daily observations, arithmetic excess returns, zero risk-free, sample std',cagr='Actual calendar years; omitted below one year',trade_return='Net closed episode P&L / sum of entry notionals; scaled entries count as one episode',turnover='Two-way filled notional / mean equity, not annualized',holding='Calendar days, includes intraday fraction',open_positions='Marked to final close, excluded from win rate and profit factor',costs='Proportional fees and adverse market slippage; limit price caps slippage',borrow='Annual configured rate, ACT/365 on previous close short market value; accrued liability deducted from reported equity, settled as vectorbt exit fee'))
     (out/'summary.json').write_text(json.dumps(payload,indent=2,default=str,allow_nan=False))
-    parts=['<html><head><meta charset="utf-8"><title>Connors research</title></head><body>', '<h1>Connors research report</h1>', '<p>'+html.escape(result.config['data'].get('provider','synthetic').upper()+' — '+ex.get('mode','source_close'))+'</p>', '<p>Source-close uses idealized completed-bar same-close fills. Synthetic results are not real-market evidence.</p>']
+    parts=['<html><head><meta charset="utf-8"><title>Connors research</title><style>body{background:#111827;color:#e5e7eb;font-family:system-ui,sans-serif;margin:24px}a{color:#93c5fd}pre{white-space:pre-wrap}</style></head><body>', '<h1>Connors research report</h1>', '<p>'+html.escape(result.config['data'].get('provider','synthetic').upper()+' — '+ex.get('mode','source_close'))+'</p>', '<p>Source-close uses idealized completed-bar same-close fills. Synthetic results are not real-market evidence.</p>']
     for i,(columns,title) in enumerate([(['combined','buy_hold'],'Equity and equal-weight buy-and-hold'),(['drawdown'],'Drawdown'),(['gross_exposure'],'Gross exposure')]):
-        fig=px.line(curves,x=curves.index,y=columns,title=title)
+        fig=dark_theme(px.line(curves,x=curves.index,y=columns,title=title))
         parts.append(fig.to_html(full_html=False,include_plotlyjs=True if i==0 else False))
     parts.extend(['<pre>'+html.escape(json.dumps(payload,indent=2,default=str))+'</pre>','</body></html>'])
     (out/'report.html').write_text('\n'.join(parts));return payload

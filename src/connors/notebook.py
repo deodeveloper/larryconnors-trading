@@ -13,6 +13,7 @@ from .data import load_aux
 from .execution import run
 from .notebook_strategies import BookStrategy, PositionType
 from .reporting import daily_equity, episodes, metrics, export
+from .plotting import dark_theme
 from .research import record
 from .strategies import stages
 
@@ -86,7 +87,7 @@ def _make_figures(result):
             "drawdown": eq.combined / eq.combined.cummax().clip(lower=initial) - 1,
         }
     )
-    return {
+    figures = {
         "trades": trade_chart,
         "wins_losses": pnl_chart,
         "equity": px.line(
@@ -94,6 +95,8 @@ def _make_figures(result):
         ),
         "drawdown": px.area(curves, y="drawdown", title=f"{symbol} — daily drawdown"),
     }
+
+    return {name: dark_theme(figure) for name, figure in figures.items()}
 
 
 class NotebookResearch:
