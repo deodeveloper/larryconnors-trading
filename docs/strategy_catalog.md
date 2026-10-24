@@ -488,7 +488,7 @@ Entry timing unstated; execution mode is explicit research assumption
 
 [Source short_term](https://docs.google.com/document/d/1aIOvM_YQpMVRlTOkTYumFFm5qzOdUQizo5ubrBOvaws/edit)
 
-**Name**: The S&P 500 RSI(2) closes below 5.
+**Name**: Cumulative RSI — Two-Day Variants
 
 **Universe**: SPY / equity ETFs or explicitly documented market application; SPX not assumed tradable
 
@@ -520,7 +520,7 @@ Parameters: `{"threshold": 35}`
 
 [Source short_term](https://docs.google.com/document/d/1aIOvM_YQpMVRlTOkTYumFFm5qzOdUQizo5ubrBOvaws/edit)
 
-**Name**: Buy the S&P on that close.
+**Name**: Double 7’s Strategy
 
 **Universe**: SPY / equity ETFs or explicitly documented market application; SPX not assumed tradable
 
@@ -552,7 +552,7 @@ Requires supplied auxiliary CSV; no automatic proxy
 
 [Source short_term](https://docs.google.com/document/d/1aIOvM_YQpMVRlTOkTYumFFm5qzOdUQizo5ubrBOvaws/edit)
 
-**Name**: Buy when this two-day sum is below the selected threshold: 35 for the first SPY example, or 50 for the looser SPY variation.
+**Name**: VIX RSI Strategy
 
 **Universe**: SPY / equity ETFs or explicitly documented market application; SPX not assumed tradable
 
@@ -584,7 +584,7 @@ Requires supplied auxiliary CSV; no automatic proxy
 
 [Source short_term](https://docs.google.com/document/d/1aIOvM_YQpMVRlTOkTYumFFm5qzOdUQizo5ubrBOvaws/edit)
 
-**Name**: When all conditions hold, buy on the close.
+**Name**: TRIN Strategy
 
 **Universe**: SPY / equity ETFs or explicitly documented market application; SPX not assumed tradable
 

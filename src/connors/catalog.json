@@ -697,7 +697,7 @@
       "status": "ready",
       "reason": "",
       "parameters": {},
-      "rules": "1. The 2-Period RSI Under 5 on the S&P 500\nDirection: Long. Source: Chapter 9, printed page 62 / PDF page 82.\nEntry",
+      "rules": "1. The 2-Period RSI Under 5 on the S&P 500\nDirection: Long. Source: Chapter 9, printed page 62 / PDF page 82.\nEntry\n1. The S&P 500 is above its 200-day moving average.\n2. The S&P 500 RSI(2) closes below 5.\n3. Buy the S&P on that close.\nExit\nExit when the S&P closes above its 5-period moving average.\nThe chapter discusses SPY and E-mini applications. No scale-in condition is specified in these rules.",
       "comparisons": "Above/below strict; at high/low inclusive; at least >=. See rules.",
       "signal_timing": "completed daily close",
       "execution_timing": "source_close idealized or next_open timing variant; next-day limits expire at session end",
@@ -726,7 +726,7 @@
     },
     {
       "id": "short_term.cumulative",
-      "name": "The S&P 500 RSI(2) closes below 5.",
+      "name": "Cumulative RSI \u2014 Two-Day Variants",
       "sources": [
         {
           "document": "short_term",
@@ -741,7 +741,7 @@
       "parameters": {
         "threshold": 35
       },
-      "rules": "2. The S&P 500 RSI(2) closes below 5.",
+      "rules": "2. Cumulative RSI \u2014 Two-Day Variants\nDirection: Long. Source: Chapter 9, printed pages 66\u201370 / PDF pages 86\u201390.\nEntry\n1. The security is above its 200-day moving average.\n2. Calculate RSI(2) for each day.\n3. Add today\u2019s RSI(2) and the preceding trading day\u2019s RSI(2).\n4. Buy when this two-day sum is below the selected threshold: 35 for the first SPY example, or 50 for the looser SPY variation.\nExit\nExit when RSI(2) closes above 65.\nThese are two parameter variants of one strategy family. Choose one threshold before applying the rules. The entry uses the sum of two daily RSI(2) readings, not a two-period RSI recalculated over another timeframe. The numbered source rules specify the buy condition but do not separately state the entry order\u2019s execution time; no fill convention is added here. The source permits alternative exits, but this reference retains its stated RSI(2) > 65 exit.",
       "comparisons": "Above/below strict; at high/low inclusive; at least >=. See rules.",
       "signal_timing": "completed daily close",
       "execution_timing": "source_close idealized or next_open timing variant; next-day limits expire at session end",
@@ -771,7 +771,7 @@
     },
     {
       "id": "short_term.double7",
-      "name": "Buy the S&P on that close.",
+      "name": "Double 7\u2019s Strategy",
       "sources": [
         {
           "document": "short_term",
@@ -784,7 +784,7 @@
       "status": "ready",
       "reason": "",
       "parameters": {},
-      "rules": "3. Buy the S&P on that close.\nExit\nExit when the S&P closes above its 5-period moving average.\nThe chapter discusses SPY and E-mini applications. No scale-in condition is specified in these rules.",
+      "rules": "3. Double 7\u2019s Strategy\nDirection: Long. Source: Chapter 10, printed page 76 / PDF page 96.\nEntry\n1. SPY is above its 200-day moving average.\n2. SPY closes at a 7-day closing low.\n3. Buy on that closing signal.\nExit\nSell the long position when SPY closes at a 7-day closing high.\nThe chapter also demonstrates QQQQ, FXI, and EWZ. The 7-day low/high conditions concern closing prices. No scale-in rule is supplied.",
       "comparisons": "Above/below strict; at high/low inclusive; at least >=. See rules.",
       "signal_timing": "completed daily close",
       "execution_timing": "source_close idealized or next_open timing variant; next-day limits expire at session end",
@@ -813,7 +813,7 @@
     },
     {
       "id": "short_term.vix",
-      "name": "Buy when this two-day sum is below the selected threshold: 35 for the first SPY example, or 50 for the looser SPY variation.",
+      "name": "VIX RSI Strategy",
       "sources": [
         {
           "document": "short_term",
@@ -826,7 +826,7 @@
       "status": "ready",
       "reason": "Requires supplied auxiliary CSV; no automatic proxy",
       "parameters": {},
-      "rules": "4. Buy when this two-day sum is below the selected threshold: 35 for the first SPY example, or 50 for the looser SPY variation.\nExit\nExit when RSI(2) closes above 65.\nThese are two parameter variants of one strategy family. Choose one threshold before applying the rules. The entry uses the sum of two daily RSI(2) readings, not a two-period RSI recalculated over another timeframe. The numbered source rules specify the buy condition but do not separately state the entry order\u2019s execution time; no fill convention is added here. The source permits alternative exits, but this reference retains its stated RSI(2) > 65 exit.",
+      "rules": "4. VIX RSI Strategy\nDirection: Long the market. Source: Chapter 12, printed page 96 / PDF page 116.\nEntry\n1. SPY is above its 200-period moving average.\n2. The RSI(2) of VIX is greater than 90.\n3. Today\u2019s VIX open is greater than yesterday\u2019s VIX close.\n4. The RSI(2) of SPY is below 30.\n5. When all conditions hold, buy on the close.\nExit\nExit when SPY RSI(2) closes above 65.\nUse separate RSI calculations for VIX and SPY. The source does not label the VIX RSI condition as yesterday\u2019s RSI. The chapter allows SPX as a simpler market-signal alternative.",
       "comparisons": "Above/below strict; at high/low inclusive; at least >=. See rules.",
       "signal_timing": "completed daily close",
       "execution_timing": "source_close idealized or next_open timing variant; next-day limits expire at session end",
@@ -855,7 +855,7 @@
     },
     {
       "id": "short_term.trin",
-      "name": "When all conditions hold, buy on the close.",
+      "name": "TRIN Strategy",
       "sources": [
         {
           "document": "short_term",
@@ -868,7 +868,7 @@
       "status": "ready",
       "reason": "Requires supplied auxiliary CSV; no automatic proxy",
       "parameters": {},
-      "rules": "5. When all conditions hold, buy on the close.\nExit\nExit when SPY RSI(2) closes above 65.\nUse separate RSI calculations for VIX and SPY. The source does not label the VIX RSI condition as yesterday\u2019s RSI. The chapter allows SPX as a simpler market-signal alternative.",
+      "rules": "5. TRIN Strategy\nDirection: Long the market. Source: Chapter 12, printed page 100 / PDF page 120.\nEntry\n1. SPY is above its 200-day moving average.\n2. The market\u2019s RSI(2) is below 50.\n3. TRIN closes above 1.00 for three consecutive days.\n4. When all three conditions hold, buy on the close.\nExit\nExit on the close when SPY RSI(2) is above 65.\nTRIN is the Arms Index based on NYSE advancing and declining issues and volume. The three consecutive readings must each be above 1.00.",
       "comparisons": "Above/below strict; at high/low inclusive; at least >=. See rules.",
       "signal_timing": "completed daily close",
       "execution_timing": "source_close idealized or next_open timing variant; next-day limits expire at session end",
@@ -910,7 +910,7 @@
       "status": "ready",
       "reason": "",
       "parameters": {},
-      "rules": "6. S&P Short Strategy\nDirection: Short. Source: Chapter 12, printed pages 106\u2013107 / PDF pages 126\u2013127.\nEntry",
+      "rules": "6. S&P Short Strategy\nDirection: Short. Source: Chapter 12, printed pages 106\u2013107 / PDF pages 126\u2013127.\nEntry\n1. SPY or SPX is below its 200-day moving average.\n2. The market closes higher than the preceding trading day for four or more consecutive days.\n3. Sell short on the close.\nExit\nCover the short position when SPY closes below its 5-period moving average.\nThere is no RSI entry condition or scale-in condition in this rule set.\nAdditional trading tests with explicit entry and exit\nThe following two items are included because their trade entry and exit are clearly stated. The book presents them as tests, rather than separately named flagship systems.",
       "comparisons": "Above/below strict; at high/low inclusive; at least >=. See rules.",
       "signal_timing": "completed daily close",
       "execution_timing": "source_close idealized or next_open timing variant; next-day limits expire at session end",
@@ -952,7 +952,7 @@
       "status": "ready",
       "reason": "",
       "parameters": {},
-      "rules": "7. Ten-Day Closing Low \u2014 Five-Day Hold\nDirection: Long stocks. Source: Chapter 8, printed page 46 / PDF page 66.",
+      "rules": "7. Ten-Day Closing Low \u2014 Five-Day Hold\nDirection: Long stocks. Source: Chapter 8, printed page 46 / PDF page 66.\n1. The stock closes at a 10-day closing low.\n2. The stock is above its 200-day simple moving average.\n3. Average daily volume over the preceding 100 trading days is at least 250,000 shares.\n4. The stock price is greater than $5.\n5. Buy on the close.\nExit: Sell on the close five trading days later.\nThis is the baseline pullback test. Next-day limit-entry variants are omitted here because the source does not fully specify their fill and holding-period conventions.",
       "comparisons": "Above/below strict; at high/low inclusive; at least >=. See rules.",
       "signal_timing": "completed daily close",
       "execution_timing": "source_close idealized or next_open timing variant; next-day limits expire at session end",

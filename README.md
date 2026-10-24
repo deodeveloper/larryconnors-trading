@@ -7,6 +7,45 @@ A modular Python research framework built from the three Google Docs saved in
 Uses **Alpaca historical bars**, **pandas-ta-classic**, **vectorbt**, and
 **Plotly Express**. There is no live-order submission code.
 
+## Start here: one notebook per book
+
+Open any of these notebooks **locally or in Google Colab**. Run Setup, provide
+`API_KEY` and `API_SECRET` through environment variables, Colab Secrets or hidden
+prompts, and set your ticker(s) and dates. There is no YAML editing requirement.
+
+| Notebook | Coverage |
+| --- | --- |
+| [High Probability ETF Trading](notebooks/high_probability_etf_trading.ipynb) | All 7 core families, long/short cells, named aggressive variants |
+| [Short Term Trading Strategies](notebooks/short_term_trading_strategies.ipynb) | All 8 selected systems/tests, including auxiliary-data inputs |
+| [Buy the Fear, Sell the Greed](notebooks/buy_the_fear_sell_the_greed.ipynb) | All 7 documented families; Terror Gaps explicitly blocked |
+
+Every strategy section has Markdown rules and an input cell for strategy name,
+ticker or ticker list, start date, end date, direction and position steps. For example,
+after notebook Setup:
+
+```python
+results["my_rsi_run"] = plot_all_stocks_pnl_charts(
+    ["SPY", "QQQ"], start_date, end_date,
+    position_type=PositionType.LONG,
+    position_steps=[0.5, 0.5],
+    strategy_func=rsi_sma_strategy,
+)
+```
+
+The notebook binding uses the official Alpaca SDK (`StockHistoricalDataClient`,
+`StockBarsRequest`, `TimeFrame.Day`). It retrieves/cache-checks warm-up history,
+then produces vectorbt completed-position trade and win/loss P&L charts, daily
+equity/drawdown plots and a formatted performance matrix. Every ticker is funded
+independently. Returned batches expose `.performance`, `.results[ticker].portfolio`,
+and `.figures[ticker]` for further analysis. Results default to real Alpaca data;
+there is no synthetic fallback in these book notebooks.
+
+**Colab:** upload a book notebook, run Setup, and upload the supplied project ZIP
+when prompted. **Local:** extract the ZIP, open a notebook from its `notebooks/`
+folder and run Setup with Python 3.12. The same file works in either environment.
+The older `research.ipynb` / `colab.ipynb` are generic synthetic demos; the three
+book notebooks above are the primary workflow.
+
 ## Setup (Python 3.12 recommended)
 
 ```bash
@@ -30,7 +69,7 @@ inside its sandbox, but the same editable install worked outside it.
 
 ## Alpaca
 
-Set `APCA_API_KEY_ID` and `APCA_API_SECRET_KEY` in the runtime environment using your
+Set `API_KEY` and `API_SECRET` (legacy CLI aliases `APCA_API_KEY_ID` and `APCA_API_SECRET_KEY` also work) in the runtime environment using your
 secret manager. `.env.example` lists the names; `.env` files are not auto-executed
 or committed. The code never prints credentials. Colab Secrets with the same
 names are supported. Then:

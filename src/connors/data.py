@@ -9,7 +9,7 @@ import exchange_calendars as xc
 def credentials():
     keys=['APCA_API_KEY_ID','APCA_API_SECRET_KEY'];values=[]
     for key in keys:
-        v=os.environ.get(key)
+        v=os.environ.get({"APCA_API_KEY_ID": "API_KEY", "APCA_API_SECRET_KEY": "API_SECRET"}[key]) or os.environ.get(key)
         if not v:
             try:
                 from google.colab import userdata

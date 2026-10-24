@@ -1,40 +1,60 @@
 # Validation record
 
-Executed on 2026-10-23, CPython 3.12.14 / macOS arm64.
+## Current notebook release (0.2.0)
 
-- 35 deterministic tests passed; full output in test-results.txt.
-- 107 named-variant/execution-mode smoke runs completed, including experimental
-  specifications with explicit opt-in and synthetic auxiliary inputs. This is
-  code coverage, not strategy efficacy or external-data validation.
-- Synthetic CLI example, multi-variant CLI, source-close and next-open execution,
-  and local notebook research cells ran successfully.
-- Both notebooks passed nbformat validation. Local notebook execution used Python
-  execution of research cells, not a hosted Jupyter kernel; HTML display was checked
-  as an artifact. Hosted Google Colab and Colab Secrets were not directly tested.
-- `pip check` found no broken dependencies. Wheel and source distributions built.
-- Linux x86_64 / CPython3.12 wheel resolution completed under constraints.txt with
-  manylinux_2_28 and manylinux2014 platform tags. pip's cross-platform resolution
-  still evaluates some host environment markers, so this is not a full Linux or
-  Colab runtime test. Installed local package imports and execution were tested.
-- Browser visual preview could not run: the in-app browser policy rejects file:
-  URLs. HTML/CSV/JSON structure and chart payloads were checked locally; no claim
-  of screenshot-based visual QA is made.
-- Authenticated Alpaca API calls were not made. Pagination, cache and timestamp
-  handling were checked with mocked endpoint responses. No credentials were read
-  or placed in project files. Auxiliary VIX/TRIN and real-market performance remain
-  unverified. All sample performance is synthetic.
+Tested locally with CPython 3.12.14 on macOS arm64. The three primary book notebooks
+are `high_probability_etf_trading.ipynb`, `short_term_trading_strategies.ipynb`, and
+`buy_the_fear_sell_the_greed.ipynb`.
 
-The tests exercise strict thresholds, Wilder/ConnorsRSI hand examples, rank ties,
-cumulative sums, bands, historical volatility, extrema window inclusion,
-consecutive-day patterns, calendar/session coverage, early closes, limit touch,
-gap improvement, order expiry, next-open shifting, actual-fill comparisons,
-TPS sequencing/trend restrictions, capital/cost constraints, complete exits,
-short P&L, borrow accrual, independent cash and episode aggregation.
+- 47 tests passed. Full output is in `test-results.txt`.
+- All three notebooks executed in actual local Jupyter kernels via nbclient with
+  mocked Alpaca SDK responses. The installation cell was replaced by the already
+  installed test environment; every default strategy cell, Plotly MIME output and
+  styled performance matrix executed. These tests use synthetic data, not market
+  evidence. Delivered notebooks have no saved outputs or credentials.
+- Default notebook coverage: HPE 14 directional runs; Short Term 8 runs; Buy the
+  Fear 9 runs (including both TPS directions and the PowerZones25 alternative).
+  Only VIX/TRIN lacking auxiliary CSVs and Terror Gaps were expected to skip.
+  Validation explicitly rejects any other skipped strategy.
+- SDK pagination was exercised using the real StockHistoricalDataClient with a
+  mocked multi-page HTTP response. Tests cover SDK requests, warm-up, cache reuse,
+  transient retry, ticker normalization, single/list inputs, allocation overrides,
+  blocked specifications, missing auxiliary inputs, zero trades, chart serialization,
+  table rendering and absence of credentials from research logs.
+- Existing indicator/execution tests continue to verify equality, Wilder/ConnorsRSI,
+  cumulative sums, extrema, consecutive patterns, calendars, early closes, limit
+  fills/expiry, next-open timing, scale-in restrictions, cash, full exits, short P&L,
+  borrow accrual, independent capital and episode aggregation. Selected vectorbt
+  results reconcile to a transparent cash/share ledger.
+- `pip check` passed; wheel and source distributions built. Linux CPython3.12 SDK
+  dependency wheels resolved under constraints.txt. Cross-platform pip resolution
+  is not a hosted Colab runtime test; it can evaluate some host platform markers.
+- Authenticated Alpaca calls and hosted Google Colab were **not** executed. The
+  notebooks request API_KEY/API_SECRET at runtime and use real Alpaca data by
+  default, with no synthetic fallback. Colab bootstrap/Secrets need verification
+  in your runtime with your credentials.
 
-Selected vectorbt results reconcile to transparent cash/share arithmetic in
-`tests/test_execution.py`: sum of signed fill cash flows plus fees, with all scale-ins
-aggregated into one flat-to-flat trade. Tests also change a future bar and assert
-prior orders remain unchanged.
+To reproduce offline validation after installing development dependencies:
 
-Known upstream deprecation warnings concern pandas-ta-classic's dayofyear use and
-exchange-calendar/pandas timezone conversion; they do not cause test failures.
+```bash
+python -m pytest -q
+python tools/validate_book_notebooks.py
+```
+
+The validator replaces data access only in executed test copies and writes them
+under ignored `reports/notebook-validation/`. It isolates mocked bars from the
+real-data cache. Optional named-variant loops default to disabled in delivered
+notebooks; turn RUN_VARIANTS on deliberately for parameter research.
+
+## Earlier baseline validation
+
+The original framework completed 107 variant/execution-mode smoke runs and its
+synthetic CLI/report workflows. The generic `research.ipynb` and `colab.ipynb`
+remain as older demonstrations; the three book notebooks supersede them for
+interactive strategy research. The standalone sample report was structurally
+checked. Its browser preview was blocked by the in-app file-URL policy; no
+screenshot-based report QA is claimed. Notebook rich outputs were exercised by
+local kernels, not manually inspected in hosted Colab.
+
+Known upstream warnings concern pandas deprecations and SDK websockets imports;
+they do not cause test failures.

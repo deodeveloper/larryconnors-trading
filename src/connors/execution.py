@@ -45,6 +45,10 @@ def run(bars,spec,p,cfg,aux=None,signal_override=None):
     for s,b in bars.items():
         sample=b.loc[dates];marks[s]=np.column_stack([sample.open,sample.open,sample.close]).ravel()
     alloc,equal=stages(spec,p)
+    if "position_steps" in ex:
+        requested = ex["position_steps"]
+        if len(requested)>len(alloc):raise ValueError("Position steps exceed documented scale-in stages")
+        alloc=list(requested)
     if any(x<=0 for x in alloc) or not np.isclose(sum(alloc),1):raise ValueError('Stages must be positive and sum to one planned position')
     n=len(symbols);stage=np.zeros(n,int);last=np.full(n,np.nan);first=last.copy();budget=np.zeros(n);units=np.zeros(n);entered=np.full(n,-1)
     liability=np.zeros(n);liability_history=np.zeros((len(index),n))

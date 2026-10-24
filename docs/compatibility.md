@@ -32,3 +32,18 @@ not runtime behavior in hosted Colab. Direct hosted Colab execution and Secrets
 integration could not be tested here. Restart the Colab runtime after installing
 if older NumPy/pandas were already imported. Do not force-install incompatible
 packages into an older Python runtime; choose a matching runtime or use local3.12.
+
+## Notebook SDK update
+
+The three book notebooks use alpaca-py 0.44.0 (official historical-data SDK),
+nbclient 0.11.0 for execution validation, and Jinja2 3.1.6 for styled performance
+tables. New transitive dependencies are pinned in constraints.txt. SDK internal
+pagination was inspected and tested with multiple mocked responses; no request
+limit truncates the history. Official API references:
+
+- https://alpaca.markets/sdks/python/api_reference/data/stock/historical.html
+- https://alpaca.markets/sdks/python/api_reference/data/stock/requests.html
+- https://vectorbt.dev/api/portfolio/trades/
+
+The original CLI REST adapter remains available; the book notebooks explicitly use
+the requested SDK path. API_KEY/API_SECRET are the notebook credential names.

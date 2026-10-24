@@ -1,4 +1,4 @@
-...................................                                      [100%]
+...............................................                          [100%]
 =============================== warnings summary ===============================
 .venv/lib/python3.12/site-packages/pandas_ta_classic/utils/_time.py:44
 .venv/lib/python3.12/site-packages/pandas_ta_classic/utils/_time.py:44
@@ -7,12 +7,22 @@
   /Users/bijaydeo/Documents/ChatGPT/Invest/larryconnors-trading/.venv/lib/python3.12/site-packages/pandas_ta_classic/utils/_time.py:44: Pandas4Warning: Timestamp.dayofyear is deprecated and will be removed in a future version. Use Timestamp.day_of_year instead.
     doy = f"Day {today.dayofyear}/365 ({100 * round(today.dayofyear / 365, 2):.2f}%)"
 
+.venv/lib/python3.12/site-packages/websockets/legacy/__init__.py:6
+  /Users/bijaydeo/Documents/ChatGPT/Invest/larryconnors-trading/.venv/lib/python3.12/site-packages/websockets/legacy/__init__.py:6: DeprecationWarning: websockets.legacy is deprecated; see https://websockets.readthedocs.io/en/stable/howto/upgrade.html for upgrade instructions
+    warnings.warn(  # deprecated in 14.0 - 2024-11-09
+
 tests/test_data.py: 20 warnings
 tests/test_execution.py: 4 warnings
 tests/test_indicators.py: 4 warnings
+tests/test_notebooks.py: 56 warnings
   /Users/bijaydeo/Documents/ChatGPT/Invest/larryconnors-trading/.venv/lib/python3.12/site-packages/pandas/core/series.py:848: Pandas4Warning: Series.values returning an ndarray that drops timezone information for DatetimeTZDtype is deprecated. In a future version, this will return the underlying DatetimeArray instead. Use 'Series.dt.tz_convert(None).to_numpy()' to get a NumPy array of UTC values, or 'Series.array' to get the ExtensionArray.
   See https://pandas.pydata.org/docs/dev/whatsnew/v3.1.0.html#whatsnew-310-deprecations-values for more details.
     warnings.warn(
 
+tests/test_notebooks.py::test_real_sdk_paginates_with_no_truncation
+  /Users/bijaydeo/Documents/ChatGPT/Invest/larryconnors-trading/.venv/lib/python3.12/site-packages/alpaca/data/models/base.py:39: Pandas4Warning: The inplace keyword in DataFrame.dropna is deprecated and will be removed in a future version (PDEP-8).
+  See https://pandas.pydata.org/docs/dev/whatsnew/v3.1.0.html#deprecation-inplace for more details.
+    df.dropna(axis=1, how="all", inplace=True)
+
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-35 passed, 32 warnings in 3.19s
+47 passed, 90 warnings in 4.54s
