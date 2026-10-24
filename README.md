@@ -41,12 +41,52 @@ and `.figures[ticker]` for further analysis. Results default to real Alpaca data
 there is no synthetic fallback in these book notebooks.
 
 **Colab:** upload a book notebook, run Setup, and upload the supplied project ZIP
-when prompted. **Local:** extract the ZIP, open a notebook from its `notebooks/`
-folder and run Setup with Python 3.12. The same file works in either environment.
+when prompted. **Local:** follow the Jupyter setup below. The same file works in either environment.
 The older `research.ipynb` / `colab.ipynb` are generic synthetic demos; the three
 book notebooks above are the primary workflow.
 
-## Setup (Python 3.12 recommended)
+## Local Jupyter setup
+
+The project-local `.venv` contains Python 3.12, the research package, JupyterLab,
+Jupyter Notebook and a kernel named **Python (Connors Research)**. On this machine,
+start it from Terminal with:
+
+```bash
+cd /Users/bijaydeo/development/codex/larryconnors-trading
+./start_jupyter.sh
+```
+
+Your browser opens JupyterLab. Open `notebooks/` and choose one of the three book
+notebooks above. Select **Python (Connors Research)** in the kernel picker (the
+project's default Python 3 kernel also uses this environment). Run the setup cells,
+enter your Alpaca keys at the hidden prompts, and edit the ticker list and dates.
+Then run the desired strategy section to see its charts and performance matrix.
+You do not need to activate the environment first. Keep Terminal open while using
+Jupyter; press Ctrl+C there and confirm shutdown when finished.
+
+For the traditional Jupyter Notebook interface:
+
+```bash
+./start_jupyter.sh --classic
+```
+
+### Recreate the environment on another machine
+
+Install Python 3.12 first. From the project root:
+
+```bash
+python3.12 -m venv .venv
+.venv/bin/python -m pip install -c constraints-jupyter-py312.txt -e '.[dev,notebook]'
+.venv/bin/python -m ipykernel install --prefix "$PWD/.venv" --name connors-research --display-name "Python (Connors Research)"
+./start_jupyter.sh
+```
+
+The environment is intentionally excluded from Git and the downloadable ZIP;
+recreate it after extracting the project elsewhere. The local Jupyter constraints
+were tested on macOS with Python 3.12. Colab uses its existing notebook frontend
+and the installation cell in each book notebook, without this launcher.
+
+## Command-line setup (Python 3.12 recommended)
 
 ```bash
 python3.12 -m venv .venv

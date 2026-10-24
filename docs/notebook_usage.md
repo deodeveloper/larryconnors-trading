@@ -1,5 +1,10 @@
 # Run a strategy by ticker and date
 
+**Local launch:** from the project root run `./start_jupyter.sh` (or
+`./start_jupyter.sh --classic` for Jupyter Notebook). Choose the
+**Python (Connors Research)** kernel. See [local setup](../README.md#local-jupyter-setup)
+to recreate the environment on another machine.
+
 Open one of the three book notebooks in `notebooks/`. They are the same files for
 local Jupyter and Colab. Each has source-linked Markdown rules and separate
 strategy execution cells.

@@ -1,5 +1,21 @@
 # Validation record
 
+## Local Jupyter environment
+
+Created a project-local `.venv` using CPython 3.12.14 on macOS arm64, with
+JupyterLab 4.6.4 and Jupyter Notebook 7.6.3. The environment and kernel registration
+are local artifacts, excluded from Git. `constraints-jupyter-py312.txt` captures
+the resolved packages, and README.md documents recreation.
+
+- All 47 project tests passed in this new environment.
+- `pip check` found no broken requirements.
+- The registered **Python (Connors Research)** kernel executed imports of the
+  research package, vectorbt, pandas-ta-classic, Alpaca and Plotly successfully.
+- `start_jupyter.sh --no-browser` started an authenticated localhost JupyterLab
+  server; its kernelspec API returned the project kernel. The test shut down
+  the server afterward. Browser interaction was not manually tested.
+- No API keys or real market data were used in these checks.
+
 ## Current notebook release (0.2.0)
 
 Tested locally with CPython 3.12.14 on macOS arm64. The three primary book notebooks
