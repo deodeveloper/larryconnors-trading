@@ -1,0 +1,138 @@
+{
+  "metrics": {
+    "total_return": -0.15070081418691528,
+    "cagr": -0.053121894461252706,
+    "max_drawdown": -0.1597625290930964,
+    "sharpe": -1.4337579990170881,
+    "completed_episodes": 57,
+    "win_rate": 0.49122807017543857,
+    "average_trade_return": -0.007382565890937154,
+    "profit_factor": 0.23514684719043977,
+    "turnover": 38.146922226014766,
+    "mean_holding_calendar_days": 9.491228070175438
+  },
+  "config": {
+    "strategy": "hpe.tps.long",
+    "data": {
+      "provider": "synthetic",
+      "symbols": [
+        "SYNTH_A",
+        "SYNTH_B"
+      ],
+      "start": "2022-01-03",
+      "end": "2024-12-31",
+      "timeframe": "1Day",
+      "warmup_sessions": 600,
+      "adjustment": "split"
+    },
+    "execution": {
+      "mode": "source_close",
+      "initial_capital": 100000,
+      "position_fraction": 0.5,
+      "shared_cash": true,
+      "max_gross_exposure": 1.0,
+      "max_leverage": 1.0,
+      "fees": 0.0005,
+      "slippage": 0.0005,
+      "assume_borrow_available": false,
+      "borrow_rate": 0
+    },
+    "output": "reports/synthetic",
+    "research": {
+      "journal": "reports/research.jsonl",
+      "splits": {
+        "train": [
+          "2022-01-03",
+          "2022-12-30"
+        ],
+        "validation": [
+          "2023-01-03",
+          "2023-12-29"
+        ],
+        "test": [
+          "2024-01-02",
+          "2024-12-31"
+        ]
+      }
+    }
+  },
+  "parameters": {
+    "aggressive": false
+  },
+  "source": {
+    "id": "hpe.tps.long",
+    "name": "HPE TPS \u2014 Time, Price, Scale-in",
+    "sources": [
+      {
+        "document": "hpe",
+        "url": "https://docs.google.com/document/d/161M2Z5ze16FslfrpoesJEQpSwBll5RS8KBR9I3dAop8/edit",
+        "section": 7
+      },
+      {
+        "document": "buy_fear",
+        "url": "https://docs.google.com/document/d/1MzbEHZr38_fwsD82O456i8YsoCz5A87QVm7S5Gl660Y/edit",
+        "section": 6,
+        "difference": "preceding 20-day volume filter; use tps_volume variant"
+      }
+    ],
+    "direction": "long",
+    "universe": "Non-leveraged, non-inverse ETFs; original 20 ETF membership not supplied",
+    "status": "ready",
+    "reason": "",
+    "parameters": {
+      "aggressive": false
+    },
+    "rules": "7. HPE TPS \u2014 Time, Price, Scale-in\nRule locations: printed pages 89\u201390 and 95; PDF pages 94\u201395 and 100. The chapter supplies the basic 1-2-3-4 version, not the complete TPS research.\nLong rules\nInitial entry: ETF above SMA(200), with RSI(2) below 25 for two consecutive closes. Buy 10% of the intended full position on the second close.\nScale-in: On a later close below the most recent actual entry price, add 20% of the intended full position. On another later qualifying close below the latest entry price, add 30%. On another later qualifying close below the latest entry price, add 40%.\nExit: Sell the entire held position when RSI(2) closes above 70, whether 10%, 30%, 60%, or 100% has been allocated.\nPrinted footnote: Do not take a new position when the ETF closes below SMA(200); this footnote is attached to the scale-in steps.\nShort rules\nInitial entry: ETF below SMA(200), with RSI(2) above 75 for two consecutive closes. Short 10% of the intended full position on the second close.\nScale-in: On a later close above the most recent actual entry price, short another 20% of the intended full position. On another later qualifying close above the latest entry price, short another 30%. On another later qualifying close above the latest entry price, short another 40%.\nExit: Cover the entire held position when RSI(2) closes below 30, regardless of how many additions occurred.\nPrinted footnote: Do not take a new position when the ETF closes above SMA(200); this footnote is attached to the scale-in steps.\nTPS implementation details\nThe allocations are percentages of the planned full position, producing cumulative exposure of 10% \u2192 30% \u2192 60% \u2192 100%. Additions occur sequentially on later qualifying days and need not be consecutive. Compare with the last actual entry price, not the original entry or average cost. Later additions depend on price; the rules do not require a new two-day RSI setup.\nThe source prints \u201c75%\u201d in the short-entry rule; this is the RSI threshold of 75. Handwritten notes appear beside the printed TPS rules in this scanned copy; the extraction above relies on the printed rules and footnotes.",
+    "comparisons": "Above/below strict; at high/low inclusive; at least >=. See rules.",
+    "signal_timing": "completed daily close",
+    "execution_timing": "source_close idealized or next_open timing variant; next-day limits expire at session end",
+    "sizing": "User-configured planned full notional fixed at episode entry; source unit systems use equal shares; TPS/Vol staged allocations use incremental notional fractions",
+    "assumptions": [
+      "No stops; exit takes precedence over add; at most one stage per close; no same-close re-entry",
+      "SMA/rolling extrema include current bar; preceding volume excludes current bar",
+      "Portfolio sizing and costs are research configuration, not supplied by books",
+      "Buy the Fear volume variant uses average of preceding 20 sessions >=250000; source does not explicitly distinguish average from every-day minimum"
+    ],
+    "indicator_definitions": {
+      "SMA": "Arithmetic mean, length in sessions, current close included; 200 trend, 5 exit/filter unless specified otherwise",
+      "EMA": "SMA seed then alpha=2/(n+1), 10 and 30 sessions in named EMA variant only",
+      "RSI": "SMA-seeded Wilder smoothing alpha=1/n, n=4 for RSI25/75, PowerZones, Vol Panics; n=2 for other standard RSI systems; flat seed=50",
+      "Bollinger_percent_b": "(close-lower)/(upper-lower), SMA5 +/- 1 population standard deviation (ddof=0 assumption); zero width undefined",
+      "Cumulative_RSI": "Sum of current and preceding daily RSI(2), not RSI with a different lookback",
+      "ConnorsRSI": "Mean of price RSI3, signed-streak RSI2, rank of current simple daily return against prior 100 returns; strictly-less rank; ties contribute zero; assumed parameters",
+      "HV": "Sample standard deviation of 100 log daily returns times sqrt(252); decimal units; explicit assumption",
+      "Extrema": "Current bar included; Double7/ten-day use close; New Highs uses high over 252 sessions, occurring within trailing 20 sessions including today"
+    },
+    "entry_rules": "close > SMA200 AND two consecutive RSI2 < 25",
+    "exit_rules": "RSI2 > 70",
+    "scale_in_rules": "10/20/30/40% planned notional; later worse close than latest actual fill; forbid wrong side of SMA200",
+    "named_variants": [
+      "hpe.tps.long",
+      "tps_volume_long"
+    ]
+  },
+  "data_quality": {
+    "SYNTH_A": {
+      "rows": 1353,
+      "missing_sessions": [],
+      "non_sessions": [],
+      "duplicates": 0
+    },
+    "SYNTH_B": {
+      "rows": 1353,
+      "missing_sessions": [],
+      "non_sessions": [],
+      "duplicates": 0
+    }
+  },
+  "conventions": {
+    "sharpe": "252 daily observations, arithmetic excess returns, zero risk-free, sample std",
+    "cagr": "Actual calendar years; omitted below one year",
+    "trade_return": "Net closed episode P&L / sum of entry notionals; scaled entries count as one episode",
+    "turnover": "Two-way filled notional / mean equity, not annualized",
+    "holding": "Calendar days, includes intraday fraction",
+    "open_positions": "Marked to final close, excluded from win rate and profit factor",
+    "costs": "Proportional fees and adverse market slippage; limit price caps slippage",
+    "borrow": "Annual configured rate, ACT/365 on previous close short market value; accrued liability deducted from reported equity, settled as vectorbt exit fee"
+  }
+}

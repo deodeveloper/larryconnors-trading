@@ -1,0 +1,23 @@
+strategy: short_term.double7
+data:
+  provider: alpaca
+  symbols: [SPY]
+  start: '2023-01-03'
+  end: '2024-12-31'
+  timeframe: 1Day
+  feed: iex
+  adjustment: split
+  timezone: America/New_York
+  regular_session: true
+  warmup_sessions: 600
+  cache: .cache/alpaca
+execution:
+  mode: next_open
+  initial_capital: 100000
+  position_fraction: 0.95
+  shared_cash: true
+  max_gross_exposure: 1
+  max_leverage: 1
+  fees: 0.0005
+  slippage: 0.0005
+output: reports/alpaca_daily

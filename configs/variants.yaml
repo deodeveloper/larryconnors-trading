@@ -1,0 +1,14 @@
+strategy: hpe.rsi4.long
+variants: [hpe.rsi4.long, hpe.rsi4.long.aggressive, buy_fear.powerzones]
+data:
+  provider: synthetic
+  symbols: [SYNTH]
+  start: '2022-01-03'
+  end: '2023-12-29'
+  adjustment: split
+execution:
+  mode: next_open
+  initial_capital: 100000
+  fees: 0.0005
+  slippage: 0.0005
+output: reports/variants

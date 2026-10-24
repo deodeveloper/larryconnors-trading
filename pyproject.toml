@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+[project]
+name = "connors-research"
+version = "0.1.0"
+description = "Source-linked Connors strategy research with Alpaca and vectorbt"
+requires-python = ">=3.11,<3.14"
+dependencies = ["pandas-ta-classic==0.8.32", "vectorbt==1.2.0", "plotly==7.1.0", "requests==2.34.2", "PyYAML==6.0.3", "exchange-calendars==4.13.2"]
+[project.optional-dependencies]
+dev = ["pytest", "ipykernel", "build"]
+[project.scripts]
+connors = "connors.cli:main"
+[tool.setuptools.packages.find]
+where = ["src"]
+[tool.setuptools.package-data]
+connors = ["catalog.json"]
+[tool.pytest.ini_options]
+testpaths = ["tests"]

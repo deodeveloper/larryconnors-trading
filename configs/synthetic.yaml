@@ -1,0 +1,27 @@
+strategy: hpe.tps.long
+data:
+  provider: synthetic
+  symbols: [SYNTH_A, SYNTH_B]
+  start: '2022-01-03'
+  end: '2024-12-31'
+  timeframe: 1Day
+  warmup_sessions: 600
+  adjustment: split
+execution:
+  mode: source_close
+  initial_capital: 100000
+  position_fraction: 0.5
+  shared_cash: true
+  max_gross_exposure: 1.0
+  max_leverage: 1.0
+  fees: 0.0005
+  slippage: 0.0005
+  assume_borrow_available: false
+  borrow_rate: 0
+output: reports/synthetic
+research:
+  journal: reports/research.jsonl
+  splits:
+    train: ['2022-01-03', '2022-12-30']
+    validation: ['2023-01-03', '2023-12-29']
+    test: ['2024-01-02', '2024-12-31']
