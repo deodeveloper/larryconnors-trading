@@ -1,0 +1,1778 @@
+{
+  "schema_version": 1,
+  "sources": {
+    "hpe": "https://docs.google.com/document/d/161M2Z5ze16FslfrpoesJEQpSwBll5RS8KBR9I3dAop8/edit",
+    "short_term": "https://docs.google.com/document/d/1aIOvM_YQpMVRlTOkTYumFFm5qzOdUQizo5ubrBOvaws/edit",
+    "buy_fear": "https://docs.google.com/document/d/1MzbEHZr38_fwsD82O456i8YsoCz5A87QVm7S5Gl660Y/edit"
+  },
+  "strategies": [
+    {
+      "id": "hpe.high_low.long",
+      "name": "HPE 3-Day High/Low Method",
+      "sources": [
+        {
+          "document": "hpe",
+          "url": "https://docs.google.com/document/d/161M2Z5ze16FslfrpoesJEQpSwBll5RS8KBR9I3dAop8/edit",
+          "section": 1
+        }
+      ],
+      "direction": "long",
+      "universe": "Non-leveraged, non-inverse ETFs; original 20 ETF membership not supplied",
+      "status": "ready",
+      "reason": "",
+      "parameters": {
+        "aggressive": false
+      },
+      "rules": "1. HPE 3-Day High/Low Method\nRule locations: printed pages 10 and 16; PDF pages 16 and 22.\nLong entry: Close above SMA(200) and below SMA(5). For three consecutive days ending today, both the daily high and daily low must be below the preceding day\u2019s corresponding high and low. Buy at today\u2019s close.\nAggressive long addition: Buy a second unit on a subsequent close below the initial entry price. Long exit: Price closes above SMA(5).\nShort entry: Close below SMA(200) and above SMA(5). For three consecutive days ending today, both the high and low must exceed the preceding day\u2019s corresponding high and low. Short at today\u2019s close.\nAggressive short addition: Short a second unit on a subsequent close above the initial entry price. Short exit: Price closes below SMA(5).\nImplementation detail: Three consecutive high/low comparisons require four trading days of data.",
+      "comparisons": "Above/below strict; at high/low inclusive; at least >=. See rules.",
+      "signal_timing": "completed daily close",
+      "execution_timing": "source_close idealized or next_open timing variant; next-day limits expire at session end",
+      "sizing": "User-configured planned full notional fixed at episode entry; source unit systems use equal shares; TPS/Vol staged allocations use incremental notional fractions",
+      "assumptions": [
+        "No stops; exit takes precedence over add; at most one stage per close; no same-close re-entry",
+        "SMA/rolling extrema include current bar; preceding volume excludes current bar",
+        "Portfolio sizing and costs are research configuration, not supplied by books"
+      ],
+      "indicator_definitions": {
+        "SMA": "Arithmetic mean, length in sessions, current close included; 200 trend, 5 exit/filter unless specified otherwise",
+        "EMA": "SMA seed then alpha=2/(n+1), 10 and 30 sessions in named EMA variant only",
+        "RSI": "SMA-seeded Wilder smoothing alpha=1/n, n=4 for RSI25/75, PowerZones, Vol Panics; n=2 for other standard RSI systems; flat seed=50",
+        "Bollinger_percent_b": "(close-lower)/(upper-lower), SMA5 +/- 1 population standard deviation (ddof=0 assumption); zero width undefined",
+        "Cumulative_RSI": "Sum of current and preceding daily RSI(2), not RSI with a different lookback",
+        "ConnorsRSI": "Mean of price RSI3, signed-streak RSI2, rank of current simple daily return against prior 100 returns; strictly-less rank; ties contribute zero; assumed parameters",
+        "HV": "Sample standard deviation of 100 log daily returns times sqrt(252); decimal units; explicit assumption",
+        "Extrema": "Current bar included; Double7/ten-day use close; New Highs uses high over 252 sessions, occurring within trailing 20 sessions including today"
+      },
+      "entry_rules": "close > SMA200 AND close < SMA5 AND 3 consecutive (high < prior high AND low < prior low)",
+      "exit_rules": "close > SMA5",
+      "scale_in_rules": "aggressive only: one equal unit when close is worse than initial actual entry",
+      "named_variants": [
+        "hpe.high_low.long",
+        "hpe.high_low.long.aggressive"
+      ]
+    },
+    {
+      "id": "hpe.rsi4.long",
+      "name": "HPE RSI 25 & RSI 75",
+      "sources": [
+        {
+          "document": "hpe",
+          "url": "https://docs.google.com/document/d/161M2Z5ze16FslfrpoesJEQpSwBll5RS8KBR9I3dAop8/edit",
+          "section": 2
+        },
+        {
+          "document": "buy_fear",
+          "url": "https://docs.google.com/document/d/1MzbEHZr38_fwsD82O456i8YsoCz5A87QVm7S5Gl660Y/edit",
+          "section": 1,
+          "difference": "25/20 alternative equivalent only with aggressive second unit; 30/25 remains separate"
+        }
+      ],
+      "direction": "long",
+      "universe": "Non-leveraged, non-inverse ETFs; original 20 ETF membership not supplied",
+      "status": "ready",
+      "reason": "",
+      "parameters": {
+        "aggressive": false,
+        "entry": 25,
+        "add": 20,
+        "exit": 55
+      },
+      "rules": "2. HPE RSI 25 & RSI 75\nRule locations: printed pages 24 and 30; PDF pages 29 and 35.\nLong entry: Close above SMA(200) and RSI(4) closes below 25. Buy on the close. Aggressive addition: Buy a second unit when RSI(4) closes below 20 while holding the position. Exit when RSI(4) closes above 55.\nShort entry: Close below SMA(200) and RSI(4) closes above 75. Short on the close. Aggressive addition: Short a second unit when RSI(4) closes above 80 while holding the position. Exit when RSI(4) closes below 45.\nThe numbers 25 and 75 are RSI thresholds, not lookback periods.",
+      "comparisons": "Above/below strict; at high/low inclusive; at least >=. See rules.",
+      "signal_timing": "completed daily close",
+      "execution_timing": "source_close idealized or next_open timing variant; next-day limits expire at session end",
+      "sizing": "User-configured planned full notional fixed at episode entry; source unit systems use equal shares; TPS/Vol staged allocations use incremental notional fractions",
+      "assumptions": [
+        "No stops; exit takes precedence over add; at most one stage per close; no same-close re-entry",
+        "SMA/rolling extrema include current bar; preceding volume excludes current bar",
+        "Portfolio sizing and costs are research configuration, not supplied by books"
+      ],
+      "indicator_definitions": {
+        "SMA": "Arithmetic mean, length in sessions, current close included; 200 trend, 5 exit/filter unless specified otherwise",
+        "EMA": "SMA seed then alpha=2/(n+1), 10 and 30 sessions in named EMA variant only",
+        "RSI": "SMA-seeded Wilder smoothing alpha=1/n, n=4 for RSI25/75, PowerZones, Vol Panics; n=2 for other standard RSI systems; flat seed=50",
+        "Bollinger_percent_b": "(close-lower)/(upper-lower), SMA5 +/- 1 population standard deviation (ddof=0 assumption); zero width undefined",
+        "Cumulative_RSI": "Sum of current and preceding daily RSI(2), not RSI with a different lookback",
+        "ConnorsRSI": "Mean of price RSI3, signed-streak RSI2, rank of current simple daily return against prior 100 returns; strictly-less rank; ties contribute zero; assumed parameters",
+        "HV": "Sample standard deviation of 100 log daily returns times sqrt(252); decimal units; explicit assumption",
+        "Extrema": "Current bar included; Double7/ten-day use close; New Highs uses high over 252 sessions, occurring within trailing 20 sessions including today"
+      },
+      "entry_rules": "close > SMA200 AND RSI4 < entry",
+      "exit_rules": "RSI4 > exit",
+      "scale_in_rules": "aggressive only: one equal unit when RSI4 crosses strict add threshold",
+      "named_variants": [
+        "hpe.rsi4.long",
+        "hpe.rsi4.long.aggressive",
+        "powerzones25"
+      ]
+    },
+    {
+      "id": "hpe.r3.long",
+      "name": "HPE R3 Strategy",
+      "sources": [
+        {
+          "document": "hpe",
+          "url": "https://docs.google.com/document/d/161M2Z5ze16FslfrpoesJEQpSwBll5RS8KBR9I3dAop8/edit",
+          "section": 3
+        }
+      ],
+      "direction": "long",
+      "universe": "Non-leveraged, non-inverse ETFs; original 20 ETF membership not supplied",
+      "status": "experimental",
+      "reason": "R3 first reading vs preceding reading unresolved; explicitly selected interpretation required",
+      "parameters": {
+        "aggressive": false,
+        "r3_interpretation": "first_declining_reading"
+      },
+      "rules": "3. HPE R3 Strategy\nRule locations: printed pages 37\u201338 and 43; PDF pages 42\u201343 and 48.\nLong entry: Close above SMA(200); RSI(2) declines three consecutive days; the book describes the first day\u2019s decline as being \u201cfrom below 60\u201d; today\u2019s RSI(2) closes below 10. Buy on the close.\nAggressive long addition: Buy a second unit on a subsequent close below the initial entry price. Long exit: RSI(2) closes above 70.\nShort entry: Close below SMA(200); RSI(2) rises three consecutive days; the book describes the first day\u2019s rise as being \u201cfrom above 40\u201d; today\u2019s RSI(2) closes above 90. Short on the close.\nAggressive short addition: Short a second unit on a subsequent close above the initial entry price. Short exit: RSI(2) closes below 30.\nSource ambiguity: The numbered rules use \u201cfrom below/above,\u201d while the examples describe the first declining day\u2019s RSI reading below 60 and the first rising day\u2019s RSI reading above 40. Preserve this distinction when translating the strategy into code rather than silently requiring the prior day\u2019s RSI to satisfy the threshold.",
+      "comparisons": "Above/below strict; at high/low inclusive; at least >=. See rules.",
+      "signal_timing": "completed daily close",
+      "execution_timing": "source_close idealized or next_open timing variant; next-day limits expire at session end",
+      "sizing": "User-configured planned full notional fixed at episode entry; source unit systems use equal shares; TPS/Vol staged allocations use incremental notional fractions",
+      "assumptions": [
+        "No stops; exit takes precedence over add; at most one stage per close; no same-close re-entry",
+        "SMA/rolling extrema include current bar; preceding volume excludes current bar",
+        "Portfolio sizing and costs are research configuration, not supplied by books"
+      ],
+      "indicator_definitions": {
+        "SMA": "Arithmetic mean, length in sessions, current close included; 200 trend, 5 exit/filter unless specified otherwise",
+        "EMA": "SMA seed then alpha=2/(n+1), 10 and 30 sessions in named EMA variant only",
+        "RSI": "SMA-seeded Wilder smoothing alpha=1/n, n=4 for RSI25/75, PowerZones, Vol Panics; n=2 for other standard RSI systems; flat seed=50",
+        "Bollinger_percent_b": "(close-lower)/(upper-lower), SMA5 +/- 1 population standard deviation (ddof=0 assumption); zero width undefined",
+        "Cumulative_RSI": "Sum of current and preceding daily RSI(2), not RSI with a different lookback",
+        "ConnorsRSI": "Mean of price RSI3, signed-streak RSI2, rank of current simple daily return against prior 100 returns; strictly-less rank; ties contribute zero; assumed parameters",
+        "HV": "Sample standard deviation of 100 log daily returns times sqrt(252); decimal units; explicit assumption",
+        "Extrema": "Current bar included; Double7/ten-day use close; New Highs uses high over 252 sessions, occurring within trailing 20 sessions including today"
+      },
+      "entry_rules": "close > SMA200 AND 3 consecutive RSI2 changes < 0 AND RSI2[t-offset] < 60 AND RSI2 < 10",
+      "exit_rules": "RSI2 > 70",
+      "scale_in_rules": "aggressive only: one equal unit at worse close than initial actual entry",
+      "named_variants": [
+        "hpe.r3.long",
+        "hpe.r3.long.aggressive"
+      ]
+    },
+    {
+      "id": "hpe.percent_b.long",
+      "name": "HPE %b Strategy",
+      "sources": [
+        {
+          "document": "hpe",
+          "url": "https://docs.google.com/document/d/161M2Z5ze16FslfrpoesJEQpSwBll5RS8KBR9I3dAop8/edit",
+          "section": 4
+        }
+      ],
+      "direction": "long",
+      "universe": "Non-leveraged, non-inverse ETFs; original 20 ETF membership not supplied",
+      "status": "ready",
+      "reason": "",
+      "parameters": {
+        "aggressive": false,
+        "length": 5,
+        "std": 1,
+        "ddof": 0
+      },
+      "rules": "4. HPE %b Strategy\nRule locations: printed pages 50 and 55; PDF pages 55 and 60. Indicator settings: printed page 111; PDF page 115.\nUse Bollinger Bands with length 5 and standard deviation multiplier 1. Formula: %b = (Close \u2212 Lower Band) / (Upper Band \u2212 Lower Band).\nLong entry: Close above SMA(200), with %b closing below 0.20 for three consecutive days. Buy on the third close. Aggressive addition: Add a second unit on a later day when %b again closes below 0.20. Exit when %b closes above 0.80.\nShort entry: Close below SMA(200), with %b closing above 0.80 for three consecutive days. Short on the third close. Aggressive addition: Short another unit on a later day when %b again closes above 0.80. Exit when %b closes below 0.20.\nThe addition depends on %b, not a worse entry price. The long example adds even though price rises that day. The chapter presents an aggressive version with a second unit; it does not specify an unlimited series of additions.",
+      "comparisons": "Above/below strict; at high/low inclusive; at least >=. See rules.",
+      "signal_timing": "completed daily close",
+      "execution_timing": "source_close idealized or next_open timing variant; next-day limits expire at session end",
+      "sizing": "User-configured planned full notional fixed at episode entry; source unit systems use equal shares; TPS/Vol staged allocations use incremental notional fractions",
+      "assumptions": [
+        "No stops; exit takes precedence over add; at most one stage per close; no same-close re-entry",
+        "SMA/rolling extrema include current bar; preceding volume excludes current bar",
+        "Portfolio sizing and costs are research configuration, not supplied by books",
+        "Band standard-deviation divisor not in document; population ddof=0 recorded"
+      ],
+      "indicator_definitions": {
+        "SMA": "Arithmetic mean, length in sessions, current close included; 200 trend, 5 exit/filter unless specified otherwise",
+        "EMA": "SMA seed then alpha=2/(n+1), 10 and 30 sessions in named EMA variant only",
+        "RSI": "SMA-seeded Wilder smoothing alpha=1/n, n=4 for RSI25/75, PowerZones, Vol Panics; n=2 for other standard RSI systems; flat seed=50",
+        "Bollinger_percent_b": "(close-lower)/(upper-lower), SMA5 +/- 1 population standard deviation (ddof=0 assumption); zero width undefined",
+        "Cumulative_RSI": "Sum of current and preceding daily RSI(2), not RSI with a different lookback",
+        "ConnorsRSI": "Mean of price RSI3, signed-streak RSI2, rank of current simple daily return against prior 100 returns; strictly-less rank; ties contribute zero; assumed parameters",
+        "HV": "Sample standard deviation of 100 log daily returns times sqrt(252); decimal units; explicit assumption",
+        "Extrema": "Current bar included; Double7/ten-day use close; New Highs uses high over 252 sessions, occurring within trailing 20 sessions including today"
+      },
+      "entry_rules": "close > SMA200 AND 3 consecutive %b < .20",
+      "exit_rules": "%b > .80",
+      "scale_in_rules": "aggressive only: one equal unit on later %b < .20 long / > .80 short",
+      "named_variants": [
+        "hpe.percent_b.long",
+        "hpe.percent_b.long.aggressive"
+      ]
+    },
+    {
+      "id": "hpe.multiple_days.long",
+      "name": "HPE Multiple Days Down / Multiple Days Up",
+      "sources": [
+        {
+          "document": "hpe",
+          "url": "https://docs.google.com/document/d/161M2Z5ze16FslfrpoesJEQpSwBll5RS8KBR9I3dAop8/edit",
+          "section": 5
+        }
+      ],
+      "direction": "long",
+      "universe": "Non-leveraged, non-inverse ETFs; original 20 ETF membership not supplied",
+      "status": "ready",
+      "reason": "",
+      "parameters": {
+        "aggressive": false,
+        "window": 5,
+        "count": 4
+      },
+      "rules": "5. HPE Multiple Days Down / Multiple Days Up\nRule locations: printed pages 62 and 68; PDF pages 67 and 73. Correct abbreviations: MDD and MDU (not MPU).\nMDD long entry: Close above SMA(200), below SMA(5), and lower than the preceding day\u2019s close on at least four of the past five trading days. Buy on the close.\nAggressive long addition: Buy a second unit on a subsequent close below the initial entry price. Long exit: Price closes above SMA(5).\nMDU short entry: Close below SMA(200), above SMA(5), and higher than the preceding day\u2019s close on at least four of the past five trading days. Short on the close, as confirmed by the examples.\nAggressive short addition: Short a second unit on a subsequent close above the initial entry price. Short exit: Price closes below SMA(5).\nMentioned variation: Four or five declining days out of six, separate from the primary four-of-five specification.",
+      "comparisons": "Above/below strict; at high/low inclusive; at least >=. See rules.",
+      "signal_timing": "completed daily close",
+      "execution_timing": "source_close idealized or next_open timing variant; next-day limits expire at session end",
+      "sizing": "User-configured planned full notional fixed at episode entry; source unit systems use equal shares; TPS/Vol staged allocations use incremental notional fractions",
+      "assumptions": [
+        "No stops; exit takes precedence over add; at most one stage per close; no same-close re-entry",
+        "SMA/rolling extrema include current bar; preceding volume excludes current bar",
+        "Portfolio sizing and costs are research configuration, not supplied by books"
+      ],
+      "indicator_definitions": {
+        "SMA": "Arithmetic mean, length in sessions, current close included; 200 trend, 5 exit/filter unless specified otherwise",
+        "EMA": "SMA seed then alpha=2/(n+1), 10 and 30 sessions in named EMA variant only",
+        "RSI": "SMA-seeded Wilder smoothing alpha=1/n, n=4 for RSI25/75, PowerZones, Vol Panics; n=2 for other standard RSI systems; flat seed=50",
+        "Bollinger_percent_b": "(close-lower)/(upper-lower), SMA5 +/- 1 population standard deviation (ddof=0 assumption); zero width undefined",
+        "Cumulative_RSI": "Sum of current and preceding daily RSI(2), not RSI with a different lookback",
+        "ConnorsRSI": "Mean of price RSI3, signed-streak RSI2, rank of current simple daily return against prior 100 returns; strictly-less rank; ties contribute zero; assumed parameters",
+        "HV": "Sample standard deviation of 100 log daily returns times sqrt(252); decimal units; explicit assumption",
+        "Extrema": "Current bar included; Double7/ten-day use close; New Highs uses high over 252 sessions, occurring within trailing 20 sessions including today"
+      },
+      "entry_rules": "close > SMA200 AND close < SMA5 AND at least count of last window close changes < 0",
+      "exit_rules": "close > SMA5",
+      "scale_in_rules": "aggressive only: one equal unit at worse close than initial actual entry",
+      "named_variants": [
+        "hpe.multiple_days.long",
+        "hpe.multiple_days.long.aggressive"
+      ]
+    },
+    {
+      "id": "hpe.rsi2_scale.long",
+      "name": "HPE RSI 10/6 & RSI 90/94 Strategy",
+      "sources": [
+        {
+          "document": "hpe",
+          "url": "https://docs.google.com/document/d/161M2Z5ze16FslfrpoesJEQpSwBll5RS8KBR9I3dAop8/edit",
+          "section": 6
+        }
+      ],
+      "direction": "long",
+      "universe": "Non-leveraged, non-inverse ETFs; original 20 ETF membership not supplied",
+      "status": "ready",
+      "reason": "",
+      "parameters": {
+        "aggressive": false,
+        "entry": 10,
+        "add": 6
+      },
+      "rules": "6. HPE RSI 10/6 & RSI 90/94 Strategy\nRule locations: printed pages 76 and 81; PDF pages 81 and 86.\nLong entry: Close above SMA(200) and RSI(2) below 10. Buy on the close. Add a second unit when RSI(2) closes below 6. Exit when price closes above SMA(5).\nShort entry: Close below SMA(200) and RSI(2) above 90. Short on the close. Add a second unit when RSI(2) closes above 94. Exit when price closes below SMA(5).\nThe second unit is part of the stated strategy, rather than separately labeled an aggressive version. The exit uses price versus SMA(5), not an RSI threshold. Mentioned long threshold variants include 10/7, 9/4, and 5/2, with analogous short-side variations.",
+      "comparisons": "Above/below strict; at high/low inclusive; at least >=. See rules.",
+      "signal_timing": "completed daily close",
+      "execution_timing": "source_close idealized or next_open timing variant; next-day limits expire at session end",
+      "sizing": "User-configured planned full notional fixed at episode entry; source unit systems use equal shares; TPS/Vol staged allocations use incremental notional fractions",
+      "assumptions": [
+        "No stops; exit takes precedence over add; at most one stage per close; no same-close re-entry",
+        "SMA/rolling extrema include current bar; preceding volume excludes current bar",
+        "Portfolio sizing and costs are research configuration, not supplied by books"
+      ],
+      "indicator_definitions": {
+        "SMA": "Arithmetic mean, length in sessions, current close included; 200 trend, 5 exit/filter unless specified otherwise",
+        "EMA": "SMA seed then alpha=2/(n+1), 10 and 30 sessions in named EMA variant only",
+        "RSI": "SMA-seeded Wilder smoothing alpha=1/n, n=4 for RSI25/75, PowerZones, Vol Panics; n=2 for other standard RSI systems; flat seed=50",
+        "Bollinger_percent_b": "(close-lower)/(upper-lower), SMA5 +/- 1 population standard deviation (ddof=0 assumption); zero width undefined",
+        "Cumulative_RSI": "Sum of current and preceding daily RSI(2), not RSI with a different lookback",
+        "ConnorsRSI": "Mean of price RSI3, signed-streak RSI2, rank of current simple daily return against prior 100 returns; strictly-less rank; ties contribute zero; assumed parameters",
+        "HV": "Sample standard deviation of 100 log daily returns times sqrt(252); decimal units; explicit assumption",
+        "Extrema": "Current bar included; Double7/ten-day use close; New Highs uses high over 252 sessions, occurring within trailing 20 sessions including today"
+      },
+      "entry_rules": "close > SMA200 AND RSI2 < entry",
+      "exit_rules": "close > SMA5",
+      "scale_in_rules": "one equal unit when RSI2 < add",
+      "named_variants": [
+        "hpe.rsi2_scale.long",
+        "rsi2_10_7",
+        "rsi2_9_4",
+        "rsi2_5_2"
+      ]
+    },
+    {
+      "id": "hpe.tps.long",
+      "name": "HPE TPS \u2014 Time, Price, Scale-in",
+      "sources": [
+        {
+          "document": "hpe",
+          "url": "https://docs.google.com/document/d/161M2Z5ze16FslfrpoesJEQpSwBll5RS8KBR9I3dAop8/edit",
+          "section": 7
+        },
+        {
+          "document": "buy_fear",
+          "url": "https://docs.google.com/document/d/1MzbEHZr38_fwsD82O456i8YsoCz5A87QVm7S5Gl660Y/edit",
+          "section": 6,
+          "difference": "preceding 20-day volume filter; use tps_volume variant"
+        }
+      ],
+      "direction": "long",
+      "universe": "Non-leveraged, non-inverse ETFs; original 20 ETF membership not supplied",
+      "status": "ready",
+      "reason": "",
+      "parameters": {
+        "aggressive": false
+      },
+      "rules": "7. HPE TPS \u2014 Time, Price, Scale-in\nRule locations: printed pages 89\u201390 and 95; PDF pages 94\u201395 and 100. The chapter supplies the basic 1-2-3-4 version, not the complete TPS research.\nLong rules\nInitial entry: ETF above SMA(200), with RSI(2) below 25 for two consecutive closes. Buy 10% of the intended full position on the second close.\nScale-in: On a later close below the most recent actual entry price, add 20% of the intended full position. On another later qualifying close below the latest entry price, add 30%. On another later qualifying close below the latest entry price, add 40%.\nExit: Sell the entire held position when RSI(2) closes above 70, whether 10%, 30%, 60%, or 100% has been allocated.\nPrinted footnote: Do not take a new position when the ETF closes below SMA(200); this footnote is attached to the scale-in steps.\nShort rules\nInitial entry: ETF below SMA(200), with RSI(2) above 75 for two consecutive closes. Short 10% of the intended full position on the second close.\nScale-in: On a later close above the most recent actual entry price, short another 20% of the intended full position. On another later qualifying close above the latest entry price, short another 30%. On another later qualifying close above the latest entry price, short another 40%.\nExit: Cover the entire held position when RSI(2) closes below 30, regardless of how many additions occurred.\nPrinted footnote: Do not take a new position when the ETF closes above SMA(200); this footnote is attached to the scale-in steps.\nTPS implementation details\nThe allocations are percentages of the planned full position, producing cumulative exposure of 10% \u2192 30% \u2192 60% \u2192 100%. Additions occur sequentially on later qualifying days and need not be consecutive. Compare with the last actual entry price, not the original entry or average cost. Later additions depend on price; the rules do not require a new two-day RSI setup.\nThe source prints \u201c75%\u201d in the short-entry rule; this is the RSI threshold of 75. Handwritten notes appear beside the printed TPS rules in this scanned copy; the extraction above relies on the printed rules and footnotes.",
+      "comparisons": "Above/below strict; at high/low inclusive; at least >=. See rules.",
+      "signal_timing": "completed daily close",
+      "execution_timing": "source_close idealized or next_open timing variant; next-day limits expire at session end",
+      "sizing": "User-configured planned full notional fixed at episode entry; source unit systems use equal shares; TPS/Vol staged allocations use incremental notional fractions",
+      "assumptions": [
+        "No stops; exit takes precedence over add; at most one stage per close; no same-close re-entry",
+        "SMA/rolling extrema include current bar; preceding volume excludes current bar",
+        "Portfolio sizing and costs are research configuration, not supplied by books",
+        "Buy the Fear volume variant uses average of preceding 20 sessions >=250000; source does not explicitly distinguish average from every-day minimum"
+      ],
+      "indicator_definitions": {
+        "SMA": "Arithmetic mean, length in sessions, current close included; 200 trend, 5 exit/filter unless specified otherwise",
+        "EMA": "SMA seed then alpha=2/(n+1), 10 and 30 sessions in named EMA variant only",
+        "RSI": "SMA-seeded Wilder smoothing alpha=1/n, n=4 for RSI25/75, PowerZones, Vol Panics; n=2 for other standard RSI systems; flat seed=50",
+        "Bollinger_percent_b": "(close-lower)/(upper-lower), SMA5 +/- 1 population standard deviation (ddof=0 assumption); zero width undefined",
+        "Cumulative_RSI": "Sum of current and preceding daily RSI(2), not RSI with a different lookback",
+        "ConnorsRSI": "Mean of price RSI3, signed-streak RSI2, rank of current simple daily return against prior 100 returns; strictly-less rank; ties contribute zero; assumed parameters",
+        "HV": "Sample standard deviation of 100 log daily returns times sqrt(252); decimal units; explicit assumption",
+        "Extrema": "Current bar included; Double7/ten-day use close; New Highs uses high over 252 sessions, occurring within trailing 20 sessions including today"
+      },
+      "entry_rules": "close > SMA200 AND two consecutive RSI2 < 25",
+      "exit_rules": "RSI2 > 70",
+      "scale_in_rules": "10/20/30/40% planned notional; later worse close than latest actual fill; forbid wrong side of SMA200",
+      "named_variants": [
+        "hpe.tps.long",
+        "tps_volume_long"
+      ]
+    },
+    {
+      "id": "hpe.high_low.short",
+      "name": "HPE 3-Day High/Low Method",
+      "sources": [
+        {
+          "document": "hpe",
+          "url": "https://docs.google.com/document/d/161M2Z5ze16FslfrpoesJEQpSwBll5RS8KBR9I3dAop8/edit",
+          "section": 1
+        }
+      ],
+      "direction": "short",
+      "universe": "Non-leveraged, non-inverse ETFs; original 20 ETF membership not supplied",
+      "status": "ready",
+      "reason": "",
+      "parameters": {
+        "aggressive": false
+      },
+      "rules": "1. HPE 3-Day High/Low Method\nRule locations: printed pages 10 and 16; PDF pages 16 and 22.\nLong entry: Close above SMA(200) and below SMA(5). For three consecutive days ending today, both the daily high and daily low must be below the preceding day\u2019s corresponding high and low. Buy at today\u2019s close.\nAggressive long addition: Buy a second unit on a subsequent close below the initial entry price. Long exit: Price closes above SMA(5).\nShort entry: Close below SMA(200) and above SMA(5). For three consecutive days ending today, both the high and low must exceed the preceding day\u2019s corresponding high and low. Short at today\u2019s close.\nAggressive short addition: Short a second unit on a subsequent close above the initial entry price. Short exit: Price closes below SMA(5).\nImplementation detail: Three consecutive high/low comparisons require four trading days of data.",
+      "comparisons": "Above/below strict; at high/low inclusive; at least >=. See rules.",
+      "signal_timing": "completed daily close",
+      "execution_timing": "source_close idealized or next_open timing variant; next-day limits expire at session end",
+      "sizing": "User-configured planned full notional fixed at episode entry; source unit systems use equal shares; TPS/Vol staged allocations use incremental notional fractions",
+      "assumptions": [
+        "No stops; exit takes precedence over add; at most one stage per close; no same-close re-entry",
+        "SMA/rolling extrema include current bar; preceding volume excludes current bar",
+        "Portfolio sizing and costs are research configuration, not supplied by books"
+      ],
+      "indicator_definitions": {
+        "SMA": "Arithmetic mean, length in sessions, current close included; 200 trend, 5 exit/filter unless specified otherwise",
+        "EMA": "SMA seed then alpha=2/(n+1), 10 and 30 sessions in named EMA variant only",
+        "RSI": "SMA-seeded Wilder smoothing alpha=1/n, n=4 for RSI25/75, PowerZones, Vol Panics; n=2 for other standard RSI systems; flat seed=50",
+        "Bollinger_percent_b": "(close-lower)/(upper-lower), SMA5 +/- 1 population standard deviation (ddof=0 assumption); zero width undefined",
+        "Cumulative_RSI": "Sum of current and preceding daily RSI(2), not RSI with a different lookback",
+        "ConnorsRSI": "Mean of price RSI3, signed-streak RSI2, rank of current simple daily return against prior 100 returns; strictly-less rank; ties contribute zero; assumed parameters",
+        "HV": "Sample standard deviation of 100 log daily returns times sqrt(252); decimal units; explicit assumption",
+        "Extrema": "Current bar included; Double7/ten-day use close; New Highs uses high over 252 sessions, occurring within trailing 20 sessions including today"
+      },
+      "entry_rules": "close < SMA200 AND close > SMA5 AND 3 consecutive (high > prior high AND low > prior low)",
+      "exit_rules": "close < SMA5",
+      "scale_in_rules": "aggressive only: one equal unit when close is worse than initial actual entry",
+      "named_variants": [
+        "hpe.high_low.short",
+        "hpe.high_low.short.aggressive"
+      ]
+    },
+    {
+      "id": "hpe.rsi4.short",
+      "name": "HPE RSI 25 & RSI 75",
+      "sources": [
+        {
+          "document": "hpe",
+          "url": "https://docs.google.com/document/d/161M2Z5ze16FslfrpoesJEQpSwBll5RS8KBR9I3dAop8/edit",
+          "section": 2
+        }
+      ],
+      "direction": "short",
+      "universe": "Non-leveraged, non-inverse ETFs; original 20 ETF membership not supplied",
+      "status": "ready",
+      "reason": "",
+      "parameters": {
+        "aggressive": false,
+        "entry": 75,
+        "add": 80,
+        "exit": 45
+      },
+      "rules": "2. HPE RSI 25 & RSI 75\nRule locations: printed pages 24 and 30; PDF pages 29 and 35.\nLong entry: Close above SMA(200) and RSI(4) closes below 25. Buy on the close. Aggressive addition: Buy a second unit when RSI(4) closes below 20 while holding the position. Exit when RSI(4) closes above 55.\nShort entry: Close below SMA(200) and RSI(4) closes above 75. Short on the close. Aggressive addition: Short a second unit when RSI(4) closes above 80 while holding the position. Exit when RSI(4) closes below 45.\nThe numbers 25 and 75 are RSI thresholds, not lookback periods.",
+      "comparisons": "Above/below strict; at high/low inclusive; at least >=. See rules.",
+      "signal_timing": "completed daily close",
+      "execution_timing": "source_close idealized or next_open timing variant; next-day limits expire at session end",
+      "sizing": "User-configured planned full notional fixed at episode entry; source unit systems use equal shares; TPS/Vol staged allocations use incremental notional fractions",
+      "assumptions": [
+        "No stops; exit takes precedence over add; at most one stage per close; no same-close re-entry",
+        "SMA/rolling extrema include current bar; preceding volume excludes current bar",
+        "Portfolio sizing and costs are research configuration, not supplied by books"
+      ],
+      "indicator_definitions": {
+        "SMA": "Arithmetic mean, length in sessions, current close included; 200 trend, 5 exit/filter unless specified otherwise",
+        "EMA": "SMA seed then alpha=2/(n+1), 10 and 30 sessions in named EMA variant only",
+        "RSI": "SMA-seeded Wilder smoothing alpha=1/n, n=4 for RSI25/75, PowerZones, Vol Panics; n=2 for other standard RSI systems; flat seed=50",
+        "Bollinger_percent_b": "(close-lower)/(upper-lower), SMA5 +/- 1 population standard deviation (ddof=0 assumption); zero width undefined",
+        "Cumulative_RSI": "Sum of current and preceding daily RSI(2), not RSI with a different lookback",
+        "ConnorsRSI": "Mean of price RSI3, signed-streak RSI2, rank of current simple daily return against prior 100 returns; strictly-less rank; ties contribute zero; assumed parameters",
+        "HV": "Sample standard deviation of 100 log daily returns times sqrt(252); decimal units; explicit assumption",
+        "Extrema": "Current bar included; Double7/ten-day use close; New Highs uses high over 252 sessions, occurring within trailing 20 sessions including today"
+      },
+      "entry_rules": "close < SMA200 AND RSI4 > entry",
+      "exit_rules": "RSI4 < exit",
+      "scale_in_rules": "aggressive only: one equal unit when RSI4 crosses strict add threshold",
+      "named_variants": [
+        "hpe.rsi4.short",
+        "hpe.rsi4.short.aggressive"
+      ]
+    },
+    {
+      "id": "hpe.r3.short",
+      "name": "HPE R3 Strategy",
+      "sources": [
+        {
+          "document": "hpe",
+          "url": "https://docs.google.com/document/d/161M2Z5ze16FslfrpoesJEQpSwBll5RS8KBR9I3dAop8/edit",
+          "section": 3
+        }
+      ],
+      "direction": "short",
+      "universe": "Non-leveraged, non-inverse ETFs; original 20 ETF membership not supplied",
+      "status": "experimental",
+      "reason": "R3 first reading vs preceding reading unresolved; explicitly selected interpretation required",
+      "parameters": {
+        "aggressive": false,
+        "r3_interpretation": "first_declining_reading"
+      },
+      "rules": "3. HPE R3 Strategy\nRule locations: printed pages 37\u201338 and 43; PDF pages 42\u201343 and 48.\nLong entry: Close above SMA(200); RSI(2) declines three consecutive days; the book describes the first day\u2019s decline as being \u201cfrom below 60\u201d; today\u2019s RSI(2) closes below 10. Buy on the close.\nAggressive long addition: Buy a second unit on a subsequent close below the initial entry price. Long exit: RSI(2) closes above 70.\nShort entry: Close below SMA(200); RSI(2) rises three consecutive days; the book describes the first day\u2019s rise as being \u201cfrom above 40\u201d; today\u2019s RSI(2) closes above 90. Short on the close.\nAggressive short addition: Short a second unit on a subsequent close above the initial entry price. Short exit: RSI(2) closes below 30.\nSource ambiguity: The numbered rules use \u201cfrom below/above,\u201d while the examples describe the first declining day\u2019s RSI reading below 60 and the first rising day\u2019s RSI reading above 40. Preserve this distinction when translating the strategy into code rather than silently requiring the prior day\u2019s RSI to satisfy the threshold.",
+      "comparisons": "Above/below strict; at high/low inclusive; at least >=. See rules.",
+      "signal_timing": "completed daily close",
+      "execution_timing": "source_close idealized or next_open timing variant; next-day limits expire at session end",
+      "sizing": "User-configured planned full notional fixed at episode entry; source unit systems use equal shares; TPS/Vol staged allocations use incremental notional fractions",
+      "assumptions": [
+        "No stops; exit takes precedence over add; at most one stage per close; no same-close re-entry",
+        "SMA/rolling extrema include current bar; preceding volume excludes current bar",
+        "Portfolio sizing and costs are research configuration, not supplied by books"
+      ],
+      "indicator_definitions": {
+        "SMA": "Arithmetic mean, length in sessions, current close included; 200 trend, 5 exit/filter unless specified otherwise",
+        "EMA": "SMA seed then alpha=2/(n+1), 10 and 30 sessions in named EMA variant only",
+        "RSI": "SMA-seeded Wilder smoothing alpha=1/n, n=4 for RSI25/75, PowerZones, Vol Panics; n=2 for other standard RSI systems; flat seed=50",
+        "Bollinger_percent_b": "(close-lower)/(upper-lower), SMA5 +/- 1 population standard deviation (ddof=0 assumption); zero width undefined",
+        "Cumulative_RSI": "Sum of current and preceding daily RSI(2), not RSI with a different lookback",
+        "ConnorsRSI": "Mean of price RSI3, signed-streak RSI2, rank of current simple daily return against prior 100 returns; strictly-less rank; ties contribute zero; assumed parameters",
+        "HV": "Sample standard deviation of 100 log daily returns times sqrt(252); decimal units; explicit assumption",
+        "Extrema": "Current bar included; Double7/ten-day use close; New Highs uses high over 252 sessions, occurring within trailing 20 sessions including today"
+      },
+      "entry_rules": "close < SMA200 AND 3 consecutive RSI2 changes > 0 AND RSI2[t-offset] > 40 AND RSI2 > 90",
+      "exit_rules": "RSI2 < 30",
+      "scale_in_rules": "aggressive only: one equal unit at worse close than initial actual entry",
+      "named_variants": [
+        "hpe.r3.short",
+        "hpe.r3.short.aggressive"
+      ]
+    },
+    {
+      "id": "hpe.percent_b.short",
+      "name": "HPE %b Strategy",
+      "sources": [
+        {
+          "document": "hpe",
+          "url": "https://docs.google.com/document/d/161M2Z5ze16FslfrpoesJEQpSwBll5RS8KBR9I3dAop8/edit",
+          "section": 4
+        }
+      ],
+      "direction": "short",
+      "universe": "Non-leveraged, non-inverse ETFs; original 20 ETF membership not supplied",
+      "status": "ready",
+      "reason": "",
+      "parameters": {
+        "aggressive": false,
+        "length": 5,
+        "std": 1,
+        "ddof": 0
+      },
+      "rules": "4. HPE %b Strategy\nRule locations: printed pages 50 and 55; PDF pages 55 and 60. Indicator settings: printed page 111; PDF page 115.\nUse Bollinger Bands with length 5 and standard deviation multiplier 1. Formula: %b = (Close \u2212 Lower Band) / (Upper Band \u2212 Lower Band).\nLong entry: Close above SMA(200), with %b closing below 0.20 for three consecutive days. Buy on the third close. Aggressive addition: Add a second unit on a later day when %b again closes below 0.20. Exit when %b closes above 0.80.\nShort entry: Close below SMA(200), with %b closing above 0.80 for three consecutive days. Short on the third close. Aggressive addition: Short another unit on a later day when %b again closes above 0.80. Exit when %b closes below 0.20.\nThe addition depends on %b, not a worse entry price. The long example adds even though price rises that day. The chapter presents an aggressive version with a second unit; it does not specify an unlimited series of additions.",
+      "comparisons": "Above/below strict; at high/low inclusive; at least >=. See rules.",
+      "signal_timing": "completed daily close",
+      "execution_timing": "source_close idealized or next_open timing variant; next-day limits expire at session end",
+      "sizing": "User-configured planned full notional fixed at episode entry; source unit systems use equal shares; TPS/Vol staged allocations use incremental notional fractions",
+      "assumptions": [
+        "No stops; exit takes precedence over add; at most one stage per close; no same-close re-entry",
+        "SMA/rolling extrema include current bar; preceding volume excludes current bar",
+        "Portfolio sizing and costs are research configuration, not supplied by books",
+        "Band standard-deviation divisor not in document; population ddof=0 recorded"
+      ],
+      "indicator_definitions": {
+        "SMA": "Arithmetic mean, length in sessions, current close included; 200 trend, 5 exit/filter unless specified otherwise",
+        "EMA": "SMA seed then alpha=2/(n+1), 10 and 30 sessions in named EMA variant only",
+        "RSI": "SMA-seeded Wilder smoothing alpha=1/n, n=4 for RSI25/75, PowerZones, Vol Panics; n=2 for other standard RSI systems; flat seed=50",
+        "Bollinger_percent_b": "(close-lower)/(upper-lower), SMA5 +/- 1 population standard deviation (ddof=0 assumption); zero width undefined",
+        "Cumulative_RSI": "Sum of current and preceding daily RSI(2), not RSI with a different lookback",
+        "ConnorsRSI": "Mean of price RSI3, signed-streak RSI2, rank of current simple daily return against prior 100 returns; strictly-less rank; ties contribute zero; assumed parameters",
+        "HV": "Sample standard deviation of 100 log daily returns times sqrt(252); decimal units; explicit assumption",
+        "Extrema": "Current bar included; Double7/ten-day use close; New Highs uses high over 252 sessions, occurring within trailing 20 sessions including today"
+      },
+      "entry_rules": "close < SMA200 AND 3 consecutive %b > .80",
+      "exit_rules": "%b < .20",
+      "scale_in_rules": "aggressive only: one equal unit on later %b < .20 long / > .80 short",
+      "named_variants": [
+        "hpe.percent_b.short",
+        "hpe.percent_b.short.aggressive"
+      ]
+    },
+    {
+      "id": "hpe.multiple_days.short",
+      "name": "HPE Multiple Days Down / Multiple Days Up",
+      "sources": [
+        {
+          "document": "hpe",
+          "url": "https://docs.google.com/document/d/161M2Z5ze16FslfrpoesJEQpSwBll5RS8KBR9I3dAop8/edit",
+          "section": 5
+        }
+      ],
+      "direction": "short",
+      "universe": "Non-leveraged, non-inverse ETFs; original 20 ETF membership not supplied",
+      "status": "ready",
+      "reason": "",
+      "parameters": {
+        "aggressive": false,
+        "window": 5,
+        "count": 4
+      },
+      "rules": "5. HPE Multiple Days Down / Multiple Days Up\nRule locations: printed pages 62 and 68; PDF pages 67 and 73. Correct abbreviations: MDD and MDU (not MPU).\nMDD long entry: Close above SMA(200), below SMA(5), and lower than the preceding day\u2019s close on at least four of the past five trading days. Buy on the close.\nAggressive long addition: Buy a second unit on a subsequent close below the initial entry price. Long exit: Price closes above SMA(5).\nMDU short entry: Close below SMA(200), above SMA(5), and higher than the preceding day\u2019s close on at least four of the past five trading days. Short on the close, as confirmed by the examples.\nAggressive short addition: Short a second unit on a subsequent close above the initial entry price. Short exit: Price closes below SMA(5).\nMentioned variation: Four or five declining days out of six, separate from the primary four-of-five specification.",
+      "comparisons": "Above/below strict; at high/low inclusive; at least >=. See rules.",
+      "signal_timing": "completed daily close",
+      "execution_timing": "source_close idealized or next_open timing variant; next-day limits expire at session end",
+      "sizing": "User-configured planned full notional fixed at episode entry; source unit systems use equal shares; TPS/Vol staged allocations use incremental notional fractions",
+      "assumptions": [
+        "No stops; exit takes precedence over add; at most one stage per close; no same-close re-entry",
+        "SMA/rolling extrema include current bar; preceding volume excludes current bar",
+        "Portfolio sizing and costs are research configuration, not supplied by books"
+      ],
+      "indicator_definitions": {
+        "SMA": "Arithmetic mean, length in sessions, current close included; 200 trend, 5 exit/filter unless specified otherwise",
+        "EMA": "SMA seed then alpha=2/(n+1), 10 and 30 sessions in named EMA variant only",
+        "RSI": "SMA-seeded Wilder smoothing alpha=1/n, n=4 for RSI25/75, PowerZones, Vol Panics; n=2 for other standard RSI systems; flat seed=50",
+        "Bollinger_percent_b": "(close-lower)/(upper-lower), SMA5 +/- 1 population standard deviation (ddof=0 assumption); zero width undefined",
+        "Cumulative_RSI": "Sum of current and preceding daily RSI(2), not RSI with a different lookback",
+        "ConnorsRSI": "Mean of price RSI3, signed-streak RSI2, rank of current simple daily return against prior 100 returns; strictly-less rank; ties contribute zero; assumed parameters",
+        "HV": "Sample standard deviation of 100 log daily returns times sqrt(252); decimal units; explicit assumption",
+        "Extrema": "Current bar included; Double7/ten-day use close; New Highs uses high over 252 sessions, occurring within trailing 20 sessions including today"
+      },
+      "entry_rules": "close < SMA200 AND close > SMA5 AND at least count of last window close changes > 0",
+      "exit_rules": "close < SMA5",
+      "scale_in_rules": "aggressive only: one equal unit at worse close than initial actual entry",
+      "named_variants": [
+        "hpe.multiple_days.short",
+        "hpe.multiple_days.short.aggressive"
+      ]
+    },
+    {
+      "id": "hpe.rsi2_scale.short",
+      "name": "HPE RSI 10/6 & RSI 90/94 Strategy",
+      "sources": [
+        {
+          "document": "hpe",
+          "url": "https://docs.google.com/document/d/161M2Z5ze16FslfrpoesJEQpSwBll5RS8KBR9I3dAop8/edit",
+          "section": 6
+        }
+      ],
+      "direction": "short",
+      "universe": "Non-leveraged, non-inverse ETFs; original 20 ETF membership not supplied",
+      "status": "ready",
+      "reason": "",
+      "parameters": {
+        "aggressive": false,
+        "entry": 90,
+        "add": 94
+      },
+      "rules": "6. HPE RSI 10/6 & RSI 90/94 Strategy\nRule locations: printed pages 76 and 81; PDF pages 81 and 86.\nLong entry: Close above SMA(200) and RSI(2) below 10. Buy on the close. Add a second unit when RSI(2) closes below 6. Exit when price closes above SMA(5).\nShort entry: Close below SMA(200) and RSI(2) above 90. Short on the close. Add a second unit when RSI(2) closes above 94. Exit when price closes below SMA(5).\nThe second unit is part of the stated strategy, rather than separately labeled an aggressive version. The exit uses price versus SMA(5), not an RSI threshold. Mentioned long threshold variants include 10/7, 9/4, and 5/2, with analogous short-side variations.",
+      "comparisons": "Above/below strict; at high/low inclusive; at least >=. See rules.",
+      "signal_timing": "completed daily close",
+      "execution_timing": "source_close idealized or next_open timing variant; next-day limits expire at session end",
+      "sizing": "User-configured planned full notional fixed at episode entry; source unit systems use equal shares; TPS/Vol staged allocations use incremental notional fractions",
+      "assumptions": [
+        "No stops; exit takes precedence over add; at most one stage per close; no same-close re-entry",
+        "SMA/rolling extrema include current bar; preceding volume excludes current bar",
+        "Portfolio sizing and costs are research configuration, not supplied by books"
+      ],
+      "indicator_definitions": {
+        "SMA": "Arithmetic mean, length in sessions, current close included; 200 trend, 5 exit/filter unless specified otherwise",
+        "EMA": "SMA seed then alpha=2/(n+1), 10 and 30 sessions in named EMA variant only",
+        "RSI": "SMA-seeded Wilder smoothing alpha=1/n, n=4 for RSI25/75, PowerZones, Vol Panics; n=2 for other standard RSI systems; flat seed=50",
+        "Bollinger_percent_b": "(close-lower)/(upper-lower), SMA5 +/- 1 population standard deviation (ddof=0 assumption); zero width undefined",
+        "Cumulative_RSI": "Sum of current and preceding daily RSI(2), not RSI with a different lookback",
+        "ConnorsRSI": "Mean of price RSI3, signed-streak RSI2, rank of current simple daily return against prior 100 returns; strictly-less rank; ties contribute zero; assumed parameters",
+        "HV": "Sample standard deviation of 100 log daily returns times sqrt(252); decimal units; explicit assumption",
+        "Extrema": "Current bar included; Double7/ten-day use close; New Highs uses high over 252 sessions, occurring within trailing 20 sessions including today"
+      },
+      "entry_rules": "close < SMA200 AND RSI2 > entry",
+      "exit_rules": "close < SMA5",
+      "scale_in_rules": "one equal unit when RSI2 > add",
+      "named_variants": [
+        "hpe.rsi2_scale.short"
+      ]
+    },
+    {
+      "id": "hpe.tps.short",
+      "name": "HPE TPS \u2014 Time, Price, Scale-in",
+      "sources": [
+        {
+          "document": "hpe",
+          "url": "https://docs.google.com/document/d/161M2Z5ze16FslfrpoesJEQpSwBll5RS8KBR9I3dAop8/edit",
+          "section": 7
+        },
+        {
+          "document": "buy_fear",
+          "url": "https://docs.google.com/document/d/1MzbEHZr38_fwsD82O456i8YsoCz5A87QVm7S5Gl660Y/edit",
+          "section": 6,
+          "difference": "preceding 20-day volume filter; use tps_volume variant"
+        }
+      ],
+      "direction": "short",
+      "universe": "Non-leveraged, non-inverse ETFs; original 20 ETF membership not supplied",
+      "status": "ready",
+      "reason": "",
+      "parameters": {
+        "aggressive": false
+      },
+      "rules": "7. HPE TPS \u2014 Time, Price, Scale-in\nRule locations: printed pages 89\u201390 and 95; PDF pages 94\u201395 and 100. The chapter supplies the basic 1-2-3-4 version, not the complete TPS research.\nLong rules\nInitial entry: ETF above SMA(200), with RSI(2) below 25 for two consecutive closes. Buy 10% of the intended full position on the second close.\nScale-in: On a later close below the most recent actual entry price, add 20% of the intended full position. On another later qualifying close below the latest entry price, add 30%. On another later qualifying close below the latest entry price, add 40%.\nExit: Sell the entire held position when RSI(2) closes above 70, whether 10%, 30%, 60%, or 100% has been allocated.\nPrinted footnote: Do not take a new position when the ETF closes below SMA(200); this footnote is attached to the scale-in steps.\nShort rules\nInitial entry: ETF below SMA(200), with RSI(2) above 75 for two consecutive closes. Short 10% of the intended full position on the second close.\nScale-in: On a later close above the most recent actual entry price, short another 20% of the intended full position. On another later qualifying close above the latest entry price, short another 30%. On another later qualifying close above the latest entry price, short another 40%.\nExit: Cover the entire held position when RSI(2) closes below 30, regardless of how many additions occurred.\nPrinted footnote: Do not take a new position when the ETF closes above SMA(200); this footnote is attached to the scale-in steps.\nTPS implementation details\nThe allocations are percentages of the planned full position, producing cumulative exposure of 10% \u2192 30% \u2192 60% \u2192 100%. Additions occur sequentially on later qualifying days and need not be consecutive. Compare with the last actual entry price, not the original entry or average cost. Later additions depend on price; the rules do not require a new two-day RSI setup.\nThe source prints \u201c75%\u201d in the short-entry rule; this is the RSI threshold of 75. Handwritten notes appear beside the printed TPS rules in this scanned copy; the extraction above relies on the printed rules and footnotes.",
+      "comparisons": "Above/below strict; at high/low inclusive; at least >=. See rules.",
+      "signal_timing": "completed daily close",
+      "execution_timing": "source_close idealized or next_open timing variant; next-day limits expire at session end",
+      "sizing": "User-configured planned full notional fixed at episode entry; source unit systems use equal shares; TPS/Vol staged allocations use incremental notional fractions",
+      "assumptions": [
+        "No stops; exit takes precedence over add; at most one stage per close; no same-close re-entry",
+        "SMA/rolling extrema include current bar; preceding volume excludes current bar",
+        "Portfolio sizing and costs are research configuration, not supplied by books",
+        "Buy the Fear volume variant uses average of preceding 20 sessions >=250000; source does not explicitly distinguish average from every-day minimum"
+      ],
+      "indicator_definitions": {
+        "SMA": "Arithmetic mean, length in sessions, current close included; 200 trend, 5 exit/filter unless specified otherwise",
+        "EMA": "SMA seed then alpha=2/(n+1), 10 and 30 sessions in named EMA variant only",
+        "RSI": "SMA-seeded Wilder smoothing alpha=1/n, n=4 for RSI25/75, PowerZones, Vol Panics; n=2 for other standard RSI systems; flat seed=50",
+        "Bollinger_percent_b": "(close-lower)/(upper-lower), SMA5 +/- 1 population standard deviation (ddof=0 assumption); zero width undefined",
+        "Cumulative_RSI": "Sum of current and preceding daily RSI(2), not RSI with a different lookback",
+        "ConnorsRSI": "Mean of price RSI3, signed-streak RSI2, rank of current simple daily return against prior 100 returns; strictly-less rank; ties contribute zero; assumed parameters",
+        "HV": "Sample standard deviation of 100 log daily returns times sqrt(252); decimal units; explicit assumption",
+        "Extrema": "Current bar included; Double7/ten-day use close; New Highs uses high over 252 sessions, occurring within trailing 20 sessions including today"
+      },
+      "entry_rules": "close < SMA200 AND two consecutive RSI2 > 75",
+      "exit_rules": "RSI2 < 30",
+      "scale_in_rules": "10/20/30/40% planned notional; later worse close than latest actual fill; forbid wrong side of SMA200",
+      "named_variants": [
+        "hpe.tps.short",
+        "tps_volume_short"
+      ]
+    },
+    {
+      "id": "short_term.rsi2",
+      "name": "The 2-Period RSI Under 5 on the S&P 500",
+      "sources": [
+        {
+          "document": "short_term",
+          "url": "https://docs.google.com/document/d/1aIOvM_YQpMVRlTOkTYumFFm5qzOdUQizo5ubrBOvaws/edit",
+          "section": 1
+        }
+      ],
+      "direction": "long",
+      "universe": "SPY / equity ETFs or explicitly documented market application; SPX not assumed tradable",
+      "status": "ready",
+      "reason": "",
+      "parameters": {},
+      "rules": "1. The 2-Period RSI Under 5 on the S&P 500\nDirection: Long. Source: Chapter 9, printed page 62 / PDF page 82.\nEntry",
+      "comparisons": "Above/below strict; at high/low inclusive; at least >=. See rules.",
+      "signal_timing": "completed daily close",
+      "execution_timing": "source_close idealized or next_open timing variant; next-day limits expire at session end",
+      "sizing": "User-configured planned full notional fixed at episode entry; source unit systems use equal shares; TPS/Vol staged allocations use incremental notional fractions",
+      "assumptions": [
+        "No stops; exit takes precedence over add; at most one stage per close; no same-close re-entry",
+        "SMA/rolling extrema include current bar; preceding volume excludes current bar",
+        "Portfolio sizing and costs are research configuration, not supplied by books"
+      ],
+      "indicator_definitions": {
+        "SMA": "Arithmetic mean, length in sessions, current close included; 200 trend, 5 exit/filter unless specified otherwise",
+        "EMA": "SMA seed then alpha=2/(n+1), 10 and 30 sessions in named EMA variant only",
+        "RSI": "SMA-seeded Wilder smoothing alpha=1/n, n=4 for RSI25/75, PowerZones, Vol Panics; n=2 for other standard RSI systems; flat seed=50",
+        "Bollinger_percent_b": "(close-lower)/(upper-lower), SMA5 +/- 1 population standard deviation (ddof=0 assumption); zero width undefined",
+        "Cumulative_RSI": "Sum of current and preceding daily RSI(2), not RSI with a different lookback",
+        "ConnorsRSI": "Mean of price RSI3, signed-streak RSI2, rank of current simple daily return against prior 100 returns; strictly-less rank; ties contribute zero; assumed parameters",
+        "HV": "Sample standard deviation of 100 log daily returns times sqrt(252); decimal units; explicit assumption",
+        "Extrema": "Current bar included; Double7/ten-day use close; New Highs uses high over 252 sessions, occurring within trailing 20 sessions including today"
+      },
+      "entry_rules": "close > SMA200 AND RSI2 < 5",
+      "exit_rules": "close > SMA5",
+      "scale_in_rules": "none",
+      "named_variants": [
+        "short_term.rsi2"
+      ]
+    },
+    {
+      "id": "short_term.cumulative",
+      "name": "The S&P 500 RSI(2) closes below 5.",
+      "sources": [
+        {
+          "document": "short_term",
+          "url": "https://docs.google.com/document/d/1aIOvM_YQpMVRlTOkTYumFFm5qzOdUQizo5ubrBOvaws/edit",
+          "section": 2
+        }
+      ],
+      "direction": "long",
+      "universe": "SPY / equity ETFs or explicitly documented market application; SPX not assumed tradable",
+      "status": "experimental",
+      "reason": "Entry timing unstated; execution mode is explicit research assumption",
+      "parameters": {
+        "threshold": 35
+      },
+      "rules": "2. The S&P 500 RSI(2) closes below 5.",
+      "comparisons": "Above/below strict; at high/low inclusive; at least >=. See rules.",
+      "signal_timing": "completed daily close",
+      "execution_timing": "source_close idealized or next_open timing variant; next-day limits expire at session end",
+      "sizing": "User-configured planned full notional fixed at episode entry; source unit systems use equal shares; TPS/Vol staged allocations use incremental notional fractions",
+      "assumptions": [
+        "No stops; exit takes precedence over add; at most one stage per close; no same-close re-entry",
+        "SMA/rolling extrema include current bar; preceding volume excludes current bar",
+        "Portfolio sizing and costs are research configuration, not supplied by books"
+      ],
+      "indicator_definitions": {
+        "SMA": "Arithmetic mean, length in sessions, current close included; 200 trend, 5 exit/filter unless specified otherwise",
+        "EMA": "SMA seed then alpha=2/(n+1), 10 and 30 sessions in named EMA variant only",
+        "RSI": "SMA-seeded Wilder smoothing alpha=1/n, n=4 for RSI25/75, PowerZones, Vol Panics; n=2 for other standard RSI systems; flat seed=50",
+        "Bollinger_percent_b": "(close-lower)/(upper-lower), SMA5 +/- 1 population standard deviation (ddof=0 assumption); zero width undefined",
+        "Cumulative_RSI": "Sum of current and preceding daily RSI(2), not RSI with a different lookback",
+        "ConnorsRSI": "Mean of price RSI3, signed-streak RSI2, rank of current simple daily return against prior 100 returns; strictly-less rank; ties contribute zero; assumed parameters",
+        "HV": "Sample standard deviation of 100 log daily returns times sqrt(252); decimal units; explicit assumption",
+        "Extrema": "Current bar included; Double7/ten-day use close; New Highs uses high over 252 sessions, occurring within trailing 20 sessions including today"
+      },
+      "entry_rules": "close > SMA200 AND RSI2[t]+RSI2[t-1] < threshold",
+      "exit_rules": "RSI2 > 65",
+      "scale_in_rules": "none",
+      "named_variants": [
+        "short_term.cumulative",
+        "cumulative50"
+      ]
+    },
+    {
+      "id": "short_term.double7",
+      "name": "Buy the S&P on that close.",
+      "sources": [
+        {
+          "document": "short_term",
+          "url": "https://docs.google.com/document/d/1aIOvM_YQpMVRlTOkTYumFFm5qzOdUQizo5ubrBOvaws/edit",
+          "section": 3
+        }
+      ],
+      "direction": "long",
+      "universe": "SPY / equity ETFs or explicitly documented market application; SPX not assumed tradable",
+      "status": "ready",
+      "reason": "",
+      "parameters": {},
+      "rules": "3. Buy the S&P on that close.\nExit\nExit when the S&P closes above its 5-period moving average.\nThe chapter discusses SPY and E-mini applications. No scale-in condition is specified in these rules.",
+      "comparisons": "Above/below strict; at high/low inclusive; at least >=. See rules.",
+      "signal_timing": "completed daily close",
+      "execution_timing": "source_close idealized or next_open timing variant; next-day limits expire at session end",
+      "sizing": "User-configured planned full notional fixed at episode entry; source unit systems use equal shares; TPS/Vol staged allocations use incremental notional fractions",
+      "assumptions": [
+        "No stops; exit takes precedence over add; at most one stage per close; no same-close re-entry",
+        "SMA/rolling extrema include current bar; preceding volume excludes current bar",
+        "Portfolio sizing and costs are research configuration, not supplied by books"
+      ],
+      "indicator_definitions": {
+        "SMA": "Arithmetic mean, length in sessions, current close included; 200 trend, 5 exit/filter unless specified otherwise",
+        "EMA": "SMA seed then alpha=2/(n+1), 10 and 30 sessions in named EMA variant only",
+        "RSI": "SMA-seeded Wilder smoothing alpha=1/n, n=4 for RSI25/75, PowerZones, Vol Panics; n=2 for other standard RSI systems; flat seed=50",
+        "Bollinger_percent_b": "(close-lower)/(upper-lower), SMA5 +/- 1 population standard deviation (ddof=0 assumption); zero width undefined",
+        "Cumulative_RSI": "Sum of current and preceding daily RSI(2), not RSI with a different lookback",
+        "ConnorsRSI": "Mean of price RSI3, signed-streak RSI2, rank of current simple daily return against prior 100 returns; strictly-less rank; ties contribute zero; assumed parameters",
+        "HV": "Sample standard deviation of 100 log daily returns times sqrt(252); decimal units; explicit assumption",
+        "Extrema": "Current bar included; Double7/ten-day use close; New Highs uses high over 252 sessions, occurring within trailing 20 sessions including today"
+      },
+      "entry_rules": "close > SMA200 AND close == rolling_min(close,7)",
+      "exit_rules": "close == rolling_max(close,7)",
+      "scale_in_rules": "none",
+      "named_variants": [
+        "short_term.double7"
+      ]
+    },
+    {
+      "id": "short_term.vix",
+      "name": "Buy when this two-day sum is below the selected threshold: 35 for the first SPY example, or 50 for the looser SPY variation.",
+      "sources": [
+        {
+          "document": "short_term",
+          "url": "https://docs.google.com/document/d/1aIOvM_YQpMVRlTOkTYumFFm5qzOdUQizo5ubrBOvaws/edit",
+          "section": 4
+        }
+      ],
+      "direction": "long",
+      "universe": "SPY / equity ETFs or explicitly documented market application; SPX not assumed tradable",
+      "status": "ready",
+      "reason": "Requires supplied auxiliary CSV; no automatic proxy",
+      "parameters": {},
+      "rules": "4. Buy when this two-day sum is below the selected threshold: 35 for the first SPY example, or 50 for the looser SPY variation.\nExit\nExit when RSI(2) closes above 65.\nThese are two parameter variants of one strategy family. Choose one threshold before applying the rules. The entry uses the sum of two daily RSI(2) readings, not a two-period RSI recalculated over another timeframe. The numbered source rules specify the buy condition but do not separately state the entry order\u2019s execution time; no fill convention is added here. The source permits alternative exits, but this reference retains its stated RSI(2) > 65 exit.",
+      "comparisons": "Above/below strict; at high/low inclusive; at least >=. See rules.",
+      "signal_timing": "completed daily close",
+      "execution_timing": "source_close idealized or next_open timing variant; next-day limits expire at session end",
+      "sizing": "User-configured planned full notional fixed at episode entry; source unit systems use equal shares; TPS/Vol staged allocations use incremental notional fractions",
+      "assumptions": [
+        "No stops; exit takes precedence over add; at most one stage per close; no same-close re-entry",
+        "SMA/rolling extrema include current bar; preceding volume excludes current bar",
+        "Portfolio sizing and costs are research configuration, not supplied by books"
+      ],
+      "indicator_definitions": {
+        "SMA": "Arithmetic mean, length in sessions, current close included; 200 trend, 5 exit/filter unless specified otherwise",
+        "EMA": "SMA seed then alpha=2/(n+1), 10 and 30 sessions in named EMA variant only",
+        "RSI": "SMA-seeded Wilder smoothing alpha=1/n, n=4 for RSI25/75, PowerZones, Vol Panics; n=2 for other standard RSI systems; flat seed=50",
+        "Bollinger_percent_b": "(close-lower)/(upper-lower), SMA5 +/- 1 population standard deviation (ddof=0 assumption); zero width undefined",
+        "Cumulative_RSI": "Sum of current and preceding daily RSI(2), not RSI with a different lookback",
+        "ConnorsRSI": "Mean of price RSI3, signed-streak RSI2, rank of current simple daily return against prior 100 returns; strictly-less rank; ties contribute zero; assumed parameters",
+        "HV": "Sample standard deviation of 100 log daily returns times sqrt(252); decimal units; explicit assumption",
+        "Extrema": "Current bar included; Double7/ten-day use close; New Highs uses high over 252 sessions, occurring within trailing 20 sessions including today"
+      },
+      "entry_rules": "SPY close > SMA200 AND VIX RSI2 > 90 AND VIX open > prior VIX close AND SPY RSI2 < 30",
+      "exit_rules": "SPY RSI2 > 65",
+      "scale_in_rules": "none",
+      "named_variants": [
+        "short_term.vix"
+      ]
+    },
+    {
+      "id": "short_term.trin",
+      "name": "When all conditions hold, buy on the close.",
+      "sources": [
+        {
+          "document": "short_term",
+          "url": "https://docs.google.com/document/d/1aIOvM_YQpMVRlTOkTYumFFm5qzOdUQizo5ubrBOvaws/edit",
+          "section": 5
+        }
+      ],
+      "direction": "long",
+      "universe": "SPY / equity ETFs or explicitly documented market application; SPX not assumed tradable",
+      "status": "ready",
+      "reason": "Requires supplied auxiliary CSV; no automatic proxy",
+      "parameters": {},
+      "rules": "5. When all conditions hold, buy on the close.\nExit\nExit when SPY RSI(2) closes above 65.\nUse separate RSI calculations for VIX and SPY. The source does not label the VIX RSI condition as yesterday\u2019s RSI. The chapter allows SPX as a simpler market-signal alternative.",
+      "comparisons": "Above/below strict; at high/low inclusive; at least >=. See rules.",
+      "signal_timing": "completed daily close",
+      "execution_timing": "source_close idealized or next_open timing variant; next-day limits expire at session end",
+      "sizing": "User-configured planned full notional fixed at episode entry; source unit systems use equal shares; TPS/Vol staged allocations use incremental notional fractions",
+      "assumptions": [
+        "No stops; exit takes precedence over add; at most one stage per close; no same-close re-entry",
+        "SMA/rolling extrema include current bar; preceding volume excludes current bar",
+        "Portfolio sizing and costs are research configuration, not supplied by books"
+      ],
+      "indicator_definitions": {
+        "SMA": "Arithmetic mean, length in sessions, current close included; 200 trend, 5 exit/filter unless specified otherwise",
+        "EMA": "SMA seed then alpha=2/(n+1), 10 and 30 sessions in named EMA variant only",
+        "RSI": "SMA-seeded Wilder smoothing alpha=1/n, n=4 for RSI25/75, PowerZones, Vol Panics; n=2 for other standard RSI systems; flat seed=50",
+        "Bollinger_percent_b": "(close-lower)/(upper-lower), SMA5 +/- 1 population standard deviation (ddof=0 assumption); zero width undefined",
+        "Cumulative_RSI": "Sum of current and preceding daily RSI(2), not RSI with a different lookback",
+        "ConnorsRSI": "Mean of price RSI3, signed-streak RSI2, rank of current simple daily return against prior 100 returns; strictly-less rank; ties contribute zero; assumed parameters",
+        "HV": "Sample standard deviation of 100 log daily returns times sqrt(252); decimal units; explicit assumption",
+        "Extrema": "Current bar included; Double7/ten-day use close; New Highs uses high over 252 sessions, occurring within trailing 20 sessions including today"
+      },
+      "entry_rules": "SPY close > SMA200 AND SPY RSI2 < 50 AND three consecutive TRIN close > 1",
+      "exit_rules": "SPY RSI2 > 65",
+      "scale_in_rules": "none",
+      "named_variants": [
+        "short_term.trin"
+      ]
+    },
+    {
+      "id": "short_term.sp_short",
+      "name": "S&P Short Strategy",
+      "sources": [
+        {
+          "document": "short_term",
+          "url": "https://docs.google.com/document/d/1aIOvM_YQpMVRlTOkTYumFFm5qzOdUQizo5ubrBOvaws/edit",
+          "section": 6
+        }
+      ],
+      "direction": "short",
+      "universe": "SPY / equity ETFs or explicitly documented market application; SPX not assumed tradable",
+      "status": "ready",
+      "reason": "",
+      "parameters": {},
+      "rules": "6. S&P Short Strategy\nDirection: Short. Source: Chapter 12, printed pages 106\u2013107 / PDF pages 126\u2013127.\nEntry",
+      "comparisons": "Above/below strict; at high/low inclusive; at least >=. See rules.",
+      "signal_timing": "completed daily close",
+      "execution_timing": "source_close idealized or next_open timing variant; next-day limits expire at session end",
+      "sizing": "User-configured planned full notional fixed at episode entry; source unit systems use equal shares; TPS/Vol staged allocations use incremental notional fractions",
+      "assumptions": [
+        "No stops; exit takes precedence over add; at most one stage per close; no same-close re-entry",
+        "SMA/rolling extrema include current bar; preceding volume excludes current bar",
+        "Portfolio sizing and costs are research configuration, not supplied by books"
+      ],
+      "indicator_definitions": {
+        "SMA": "Arithmetic mean, length in sessions, current close included; 200 trend, 5 exit/filter unless specified otherwise",
+        "EMA": "SMA seed then alpha=2/(n+1), 10 and 30 sessions in named EMA variant only",
+        "RSI": "SMA-seeded Wilder smoothing alpha=1/n, n=4 for RSI25/75, PowerZones, Vol Panics; n=2 for other standard RSI systems; flat seed=50",
+        "Bollinger_percent_b": "(close-lower)/(upper-lower), SMA5 +/- 1 population standard deviation (ddof=0 assumption); zero width undefined",
+        "Cumulative_RSI": "Sum of current and preceding daily RSI(2), not RSI with a different lookback",
+        "ConnorsRSI": "Mean of price RSI3, signed-streak RSI2, rank of current simple daily return against prior 100 returns; strictly-less rank; ties contribute zero; assumed parameters",
+        "HV": "Sample standard deviation of 100 log daily returns times sqrt(252); decimal units; explicit assumption",
+        "Extrema": "Current bar included; Double7/ten-day use close; New Highs uses high over 252 sessions, occurring within trailing 20 sessions including today"
+      },
+      "entry_rules": "close < SMA200 AND at least four consecutive positive close changes",
+      "exit_rules": "close < SMA5",
+      "scale_in_rules": "none",
+      "named_variants": [
+        "short_term.sp_short"
+      ]
+    },
+    {
+      "id": "short_term.ten_day",
+      "name": "Ten-Day Closing Low \u2014 Five-Day Hold",
+      "sources": [
+        {
+          "document": "short_term",
+          "url": "https://docs.google.com/document/d/1aIOvM_YQpMVRlTOkTYumFFm5qzOdUQizo5ubrBOvaws/edit",
+          "section": 7
+        }
+      ],
+      "direction": "long",
+      "universe": "Stocks; historical point-in-time universe and delisted membership must be supplied",
+      "status": "ready",
+      "reason": "",
+      "parameters": {},
+      "rules": "7. Ten-Day Closing Low \u2014 Five-Day Hold\nDirection: Long stocks. Source: Chapter 8, printed page 46 / PDF page 66.",
+      "comparisons": "Above/below strict; at high/low inclusive; at least >=. See rules.",
+      "signal_timing": "completed daily close",
+      "execution_timing": "source_close idealized or next_open timing variant; next-day limits expire at session end",
+      "sizing": "User-configured planned full notional fixed at episode entry; source unit systems use equal shares; TPS/Vol staged allocations use incremental notional fractions",
+      "assumptions": [
+        "No stops; exit takes precedence over add; at most one stage per close; no same-close re-entry",
+        "SMA/rolling extrema include current bar; preceding volume excludes current bar",
+        "Portfolio sizing and costs are research configuration, not supplied by books",
+        "Source-close exit five sessions after actual entry; next-open variant evaluates five-session hold at close and exits following open"
+      ],
+      "indicator_definitions": {
+        "SMA": "Arithmetic mean, length in sessions, current close included; 200 trend, 5 exit/filter unless specified otherwise",
+        "EMA": "SMA seed then alpha=2/(n+1), 10 and 30 sessions in named EMA variant only",
+        "RSI": "SMA-seeded Wilder smoothing alpha=1/n, n=4 for RSI25/75, PowerZones, Vol Panics; n=2 for other standard RSI systems; flat seed=50",
+        "Bollinger_percent_b": "(close-lower)/(upper-lower), SMA5 +/- 1 population standard deviation (ddof=0 assumption); zero width undefined",
+        "Cumulative_RSI": "Sum of current and preceding daily RSI(2), not RSI with a different lookback",
+        "ConnorsRSI": "Mean of price RSI3, signed-streak RSI2, rank of current simple daily return against prior 100 returns; strictly-less rank; ties contribute zero; assumed parameters",
+        "HV": "Sample standard deviation of 100 log daily returns times sqrt(252); decimal units; explicit assumption",
+        "Extrema": "Current bar included; Double7/ten-day use close; New Highs uses high over 252 sessions, occurring within trailing 20 sessions including today"
+      },
+      "entry_rules": "close == rolling_min(close,10) AND close > SMA200 AND mean(volume[t-100:t-1]) >= 250000 AND close > 5",
+      "exit_rules": "five sessions after entry, close; next-open variant described in methodology",
+      "scale_in_rules": "none",
+      "named_variants": [
+        "short_term.ten_day"
+      ]
+    },
+    {
+      "id": "short_term.overnight",
+      "name": "Overnight SPY Holding Test",
+      "sources": [
+        {
+          "document": "short_term",
+          "url": "https://docs.google.com/document/d/1aIOvM_YQpMVRlTOkTYumFFm5qzOdUQizo5ubrBOvaws/edit",
+          "section": 8
+        }
+      ],
+      "direction": "long",
+      "universe": "SPY / equity ETFs or explicitly documented market application; SPX not assumed tradable",
+      "status": "ready",
+      "reason": "",
+      "parameters": {},
+      "rules": "8. Overnight SPY Holding Test\nDirection: Long SPY. Source: Chapter 7, printed page 37 / PDF page 55.\nEntry: Buy SPY on the close each trading day.\nExit: Sell on the next trading day\u2019s open.\nThe test does not add a moving-average, RSI, or other signal filter. The chapter separately compares buying at the open and selling at the same day\u2019s close; that daytime comparison is not included as a selected strategy.",
+      "comparisons": "Above/below strict; at high/low inclusive; at least >=. See rules.",
+      "signal_timing": "completed daily close",
+      "execution_timing": "Source-close entry, next session open exit; next_open entry mode intentionally rejected",
+      "sizing": "User-configured planned full notional fixed at episode entry; source unit systems use equal shares; TPS/Vol staged allocations use incremental notional fractions",
+      "assumptions": [
+        "No stops; exit takes precedence over add; at most one stage per close; no same-close re-entry",
+        "SMA/rolling extrema include current bar; preceding volume excludes current bar",
+        "Portfolio sizing and costs are research configuration, not supplied by books"
+      ],
+      "indicator_definitions": {
+        "SMA": "Arithmetic mean, length in sessions, current close included; 200 trend, 5 exit/filter unless specified otherwise",
+        "EMA": "SMA seed then alpha=2/(n+1), 10 and 30 sessions in named EMA variant only",
+        "RSI": "SMA-seeded Wilder smoothing alpha=1/n, n=4 for RSI25/75, PowerZones, Vol Panics; n=2 for other standard RSI systems; flat seed=50",
+        "Bollinger_percent_b": "(close-lower)/(upper-lower), SMA5 +/- 1 population standard deviation (ddof=0 assumption); zero width undefined",
+        "Cumulative_RSI": "Sum of current and preceding daily RSI(2), not RSI with a different lookback",
+        "ConnorsRSI": "Mean of price RSI3, signed-streak RSI2, rank of current simple daily return against prior 100 returns; strictly-less rank; ties contribute zero; assumed parameters",
+        "HV": "Sample standard deviation of 100 log daily returns times sqrt(252); decimal units; explicit assumption",
+        "Extrema": "Current bar included; Double7/ten-day use close; New Highs uses high over 252 sessions, occurring within trailing 20 sessions including today"
+      },
+      "entry_rules": "every session close",
+      "exit_rules": "next session open",
+      "scale_in_rules": "none",
+      "named_variants": [
+        "short_term.overnight"
+      ]
+    },
+    {
+      "id": "buy_fear.powerzones",
+      "name": "RSI PowerZones",
+      "sources": [
+        {
+          "document": "buy_fear",
+          "url": "https://docs.google.com/document/d/1MzbEHZr38_fwsD82O456i8YsoCz5A87QVm7S5Gl660Y/edit",
+          "section": 1
+        }
+      ],
+      "direction": "long",
+      "universe": "SPY / equity ETFs or explicitly documented market application; SPX not assumed tradable",
+      "status": "ready",
+      "reason": "",
+      "parameters": {
+        "entry": 30,
+        "add": 25,
+        "exit": 55
+      },
+      "rules": "1. RSI PowerZones\nMarket / direction: Long SPY; also studied on equity ETFs.\nEntry: Price closes above its 200-day simple moving average and 4-period RSI closes below 30. Buy on the close.\nScale-in: Buy one additional equal unit if 4-period RSI closes below 25 while the position is open.\nExit: Sell the entire position on the close when 4-period RSI closes above 55.\nAlternative: Enter below RSI 25 and add below RSI 20; retain the RSI-above-55 exit.",
+      "comparisons": "Above/below strict; at high/low inclusive; at least >=. See rules.",
+      "signal_timing": "completed daily close",
+      "execution_timing": "source_close idealized or next_open timing variant; next-day limits expire at session end",
+      "sizing": "User-configured planned full notional fixed at episode entry; source unit systems use equal shares; TPS/Vol staged allocations use incremental notional fractions",
+      "assumptions": [
+        "No stops; exit takes precedence over add; at most one stage per close; no same-close re-entry",
+        "SMA/rolling extrema include current bar; preceding volume excludes current bar",
+        "Portfolio sizing and costs are research configuration, not supplied by books"
+      ],
+      "indicator_definitions": {
+        "SMA": "Arithmetic mean, length in sessions, current close included; 200 trend, 5 exit/filter unless specified otherwise",
+        "EMA": "SMA seed then alpha=2/(n+1), 10 and 30 sessions in named EMA variant only",
+        "RSI": "SMA-seeded Wilder smoothing alpha=1/n, n=4 for RSI25/75, PowerZones, Vol Panics; n=2 for other standard RSI systems; flat seed=50",
+        "Bollinger_percent_b": "(close-lower)/(upper-lower), SMA5 +/- 1 population standard deviation (ddof=0 assumption); zero width undefined",
+        "Cumulative_RSI": "Sum of current and preceding daily RSI(2), not RSI with a different lookback",
+        "ConnorsRSI": "Mean of price RSI3, signed-streak RSI2, rank of current simple daily return against prior 100 returns; strictly-less rank; ties contribute zero; assumed parameters",
+        "HV": "Sample standard deviation of 100 log daily returns times sqrt(252); decimal units; explicit assumption",
+        "Extrema": "Current bar included; Double7/ten-day use close; New Highs uses high over 252 sessions, occurring within trailing 20 sessions including today"
+      },
+      "entry_rules": "close > SMA200 AND RSI4 < entry",
+      "exit_rules": "RSI4 > 55",
+      "scale_in_rules": "one equal unit on later RSI4 < add",
+      "named_variants": [
+        "buy_fear.powerzones"
+      ]
+    },
+    {
+      "id": "buy_fear.crash",
+      "name": "CRASH",
+      "sources": [
+        {
+          "document": "buy_fear",
+          "url": "https://docs.google.com/document/d/1MzbEHZr38_fwsD82O456i8YsoCz5A87QVm7S5Gl660Y/edit",
+          "section": 2
+        }
+      ],
+      "direction": "short",
+      "universe": "Stocks; historical point-in-time universe and delisted membership must be supplied",
+      "status": "experimental",
+      "reason": "ConnorsRSI(3,2,100), strict less-than percent rank and HV conventions are explicit assumptions absent in document",
+      "parameters": {
+        "limit_pct": 0.03,
+        "exit": 30,
+        "hv_min": 1.0
+      },
+      "rules": "2. CRASH\nMarket / direction: Short stocks.\nSetup: Closing price greater than $5; 21-day average daily volume at least 1 million shares; 100-day historical volatility at least 100%; closing ConnorsRSI at least 90.\nEntry: On the next trading day, short using a sell-limit order 3% or 5% above the signal-day close. These are separate entry variants.\nExit: Cover on the close when ConnorsRSI closes below 30.\nAlternatives: ConnorsRSI exit below 20; historical-volatility minimums of 60% or 80%.",
+      "comparisons": "Above/below strict; at high/low inclusive; at least >=. See rules.",
+      "signal_timing": "completed daily close",
+      "execution_timing": "source_close idealized or next_open timing variant; next-day limits expire at session end",
+      "sizing": "User-configured planned full notional fixed at episode entry; source unit systems use equal shares; TPS/Vol staged allocations use incremental notional fractions",
+      "assumptions": [
+        "No stops; exit takes precedence over add; at most one stage per close; no same-close re-entry",
+        "SMA/rolling extrema include current bar; preceding volume excludes current bar",
+        "Portfolio sizing and costs are research configuration, not supplied by books"
+      ],
+      "indicator_definitions": {
+        "SMA": "Arithmetic mean, length in sessions, current close included; 200 trend, 5 exit/filter unless specified otherwise",
+        "EMA": "SMA seed then alpha=2/(n+1), 10 and 30 sessions in named EMA variant only",
+        "RSI": "SMA-seeded Wilder smoothing alpha=1/n, n=4 for RSI25/75, PowerZones, Vol Panics; n=2 for other standard RSI systems; flat seed=50",
+        "Bollinger_percent_b": "(close-lower)/(upper-lower), SMA5 +/- 1 population standard deviation (ddof=0 assumption); zero width undefined",
+        "Cumulative_RSI": "Sum of current and preceding daily RSI(2), not RSI with a different lookback",
+        "ConnorsRSI": "Mean of price RSI3, signed-streak RSI2, rank of current simple daily return against prior 100 returns; strictly-less rank; ties contribute zero; assumed parameters",
+        "HV": "Sample standard deviation of 100 log daily returns times sqrt(252); decimal units; explicit assumption",
+        "Extrema": "Current bar included; Double7/ten-day use close; New Highs uses high over 252 sessions, occurring within trailing 20 sessions including today"
+      },
+      "entry_rules": "close > 5 AND mean(volume,21) >= 1000000 AND HV100 >= hv_min AND ConnorsRSI >= 90; next-day sell limit close*(1+limit_pct)",
+      "exit_rules": "ConnorsRSI < exit",
+      "scale_in_rules": "none",
+      "named_variants": [
+        "buy_fear.crash",
+        "crash5",
+        "crash_exit20",
+        "crash_hv60",
+        "crash_hv80"
+      ]
+    },
+    {
+      "id": "buy_fear.vol_panics",
+      "name": "Vol Panics",
+      "sources": [
+        {
+          "document": "buy_fear",
+          "url": "https://docs.google.com/document/d/1MzbEHZr38_fwsD82O456i8YsoCz5A87QVm7S5Gl660Y/edit",
+          "section": 3
+        }
+      ],
+      "direction": "short",
+      "universe": "VXX; historical note/product changes disclosed",
+      "status": "ready",
+      "reason": "",
+      "parameters": {
+        "stages": [
+          1.0
+        ],
+        "exit_kind": "sma"
+      },
+      "rules": "3. Vol Panics\nMarket / direction: Short VXX.\nEntry: VXX closes above its 5-day simple moving average and its 4-period RSI is above 70. Short on the close.\nPosition variants: Basic \u2014 short one unit. Double \u2014 add one equal unit if a later close is above the initial entry-day close. 2-3-5 \u2014 short 20%, then 30%, then 50% of the planned full position. 1-2-3-4 \u2014 short 10%, then 20%, then 30%, then 40%.\nScale-in condition: In either staged variant, each later addition requires a close above the most recent actual entry price. The percentages are incremental allocations of the planned full position.\nExit: Cover the entire held position on the close when VXX closes below its 5-day simple moving average.\nAlternative exit: Cover when VXX\u2019s 4-period RSI closes below 20.",
+      "comparisons": "Above/below strict; at high/low inclusive; at least >=. See rules.",
+      "signal_timing": "completed daily close",
+      "execution_timing": "source_close idealized or next_open timing variant; next-day limits expire at session end",
+      "sizing": "User-configured planned full notional fixed at episode entry; source unit systems use equal shares; TPS/Vol staged allocations use incremental notional fractions",
+      "assumptions": [
+        "No stops; exit takes precedence over add; at most one stage per close; no same-close re-entry",
+        "SMA/rolling extrema include current bar; preceding volume excludes current bar",
+        "Portfolio sizing and costs are research configuration, not supplied by books"
+      ],
+      "indicator_definitions": {
+        "SMA": "Arithmetic mean, length in sessions, current close included; 200 trend, 5 exit/filter unless specified otherwise",
+        "EMA": "SMA seed then alpha=2/(n+1), 10 and 30 sessions in named EMA variant only",
+        "RSI": "SMA-seeded Wilder smoothing alpha=1/n, n=4 for RSI25/75, PowerZones, Vol Panics; n=2 for other standard RSI systems; flat seed=50",
+        "Bollinger_percent_b": "(close-lower)/(upper-lower), SMA5 +/- 1 population standard deviation (ddof=0 assumption); zero width undefined",
+        "Cumulative_RSI": "Sum of current and preceding daily RSI(2), not RSI with a different lookback",
+        "ConnorsRSI": "Mean of price RSI3, signed-streak RSI2, rank of current simple daily return against prior 100 returns; strictly-less rank; ties contribute zero; assumed parameters",
+        "HV": "Sample standard deviation of 100 log daily returns times sqrt(252); decimal units; explicit assumption",
+        "Extrema": "Current bar included; Double7/ten-day use close; New Highs uses high over 252 sessions, occurring within trailing 20 sessions including today"
+      },
+      "entry_rules": "close > SMA5 AND RSI4 > 70",
+      "exit_rules": "close < SMA5, or named RSI4 < 20 variant",
+      "scale_in_rules": "basic 100%; double 50/50 equal shares above first actual entry; staged 20/30/50 or 10/20/30/40 notional above latest actual entry",
+      "named_variants": [
+        "buy_fear.vol_panics",
+        "vol_double",
+        "vol235",
+        "vol1234",
+        "vol_rsi_exit"
+      ]
+    },
+    {
+      "id": "buy_fear.vxx_trend",
+      "name": "VXX Trend Strategy",
+      "sources": [
+        {
+          "document": "buy_fear",
+          "url": "https://docs.google.com/document/d/1MzbEHZr38_fwsD82O456i8YsoCz5A87QVm7S5Gl660Y/edit",
+          "section": 4
+        }
+      ],
+      "direction": "short",
+      "universe": "VXX; historical note/product changes disclosed",
+      "status": "ready",
+      "reason": "",
+      "parameters": {
+        "ma": "sma"
+      },
+      "rules": "4. VXX Trend Strategy\nMarket / direction: Short VXX.\nEntry: Short when the 10-day simple moving average crosses below the 30-day simple moving average.\nExit: Cover when the 10-day simple moving average crosses above the 30-day simple moving average.\nAlternative: Use 10-day and 30-day exponential moving averages for both signals. Keep the same moving-average type for entry and exit.",
+      "comparisons": "Above/below strict; at high/low inclusive; at least >=. See rules.",
+      "signal_timing": "completed daily close",
+      "execution_timing": "source_close idealized or next_open timing variant; next-day limits expire at session end",
+      "sizing": "User-configured planned full notional fixed at episode entry; source unit systems use equal shares; TPS/Vol staged allocations use incremental notional fractions",
+      "assumptions": [
+        "No stops; exit takes precedence over add; at most one stage per close; no same-close re-entry",
+        "SMA/rolling extrema include current bar; preceding volume excludes current bar",
+        "Portfolio sizing and costs are research configuration, not supplied by books"
+      ],
+      "indicator_definitions": {
+        "SMA": "Arithmetic mean, length in sessions, current close included; 200 trend, 5 exit/filter unless specified otherwise",
+        "EMA": "SMA seed then alpha=2/(n+1), 10 and 30 sessions in named EMA variant only",
+        "RSI": "SMA-seeded Wilder smoothing alpha=1/n, n=4 for RSI25/75, PowerZones, Vol Panics; n=2 for other standard RSI systems; flat seed=50",
+        "Bollinger_percent_b": "(close-lower)/(upper-lower), SMA5 +/- 1 population standard deviation (ddof=0 assumption); zero width undefined",
+        "Cumulative_RSI": "Sum of current and preceding daily RSI(2), not RSI with a different lookback",
+        "ConnorsRSI": "Mean of price RSI3, signed-streak RSI2, rank of current simple daily return against prior 100 returns; strictly-less rank; ties contribute zero; assumed parameters",
+        "HV": "Sample standard deviation of 100 log daily returns times sqrt(252); decimal units; explicit assumption",
+        "Extrema": "Current bar included; Double7/ten-day use close; New Highs uses high over 252 sessions, occurring within trailing 20 sessions including today"
+      },
+      "entry_rules": "MA10 < MA30 AND prior MA10 >= prior MA30",
+      "exit_rules": "MA10 > MA30 AND prior MA10 <= prior MA30",
+      "scale_in_rules": "none",
+      "named_variants": [
+        "buy_fear.vxx_trend",
+        "vxx_ema"
+      ]
+    },
+    {
+      "id": "buy_fear.new_highs",
+      "name": "Trading New Highs",
+      "sources": [
+        {
+          "document": "buy_fear",
+          "url": "https://docs.google.com/document/d/1MzbEHZr38_fwsD82O456i8YsoCz5A87QVm7S5Gl660Y/edit",
+          "section": 5
+        }
+      ],
+      "direction": "long",
+      "universe": "Stocks; historical point-in-time universe and delisted membership must be supplied",
+      "status": "experimental",
+      "reason": "ConnorsRSI(3,2,100), strict less-than percent rank and HV conventions are explicit assumptions absent in document",
+      "parameters": {
+        "limit_pct": 0.07
+      },
+      "rules": "5. Trading New Highs\nMarket / direction: Long stocks.\nSetup: Closing price greater than $5; 21-day average daily volume greater than 1 million shares; a 52-week intraday high occurred within the past 20 trading days; ConnorsRSI below 15.\nEntry: On the next trading day, buy using a limit order 7% or 10% below the signal-day close. These are separate entry variants.\nExit: Sell on the close when ConnorsRSI closes above 70.\nThe 52-week-high condition uses the daily high, not the closing price.",
+      "comparisons": "Above/below strict; at high/low inclusive; at least >=. See rules.",
+      "signal_timing": "completed daily close",
+      "execution_timing": "source_close idealized or next_open timing variant; next-day limits expire at session end",
+      "sizing": "User-configured planned full notional fixed at episode entry; source unit systems use equal shares; TPS/Vol staged allocations use incremental notional fractions",
+      "assumptions": [
+        "No stops; exit takes precedence over add; at most one stage per close; no same-close re-entry",
+        "SMA/rolling extrema include current bar; preceding volume excludes current bar",
+        "Portfolio sizing and costs are research configuration, not supplied by books"
+      ],
+      "indicator_definitions": {
+        "SMA": "Arithmetic mean, length in sessions, current close included; 200 trend, 5 exit/filter unless specified otherwise",
+        "EMA": "SMA seed then alpha=2/(n+1), 10 and 30 sessions in named EMA variant only",
+        "RSI": "SMA-seeded Wilder smoothing alpha=1/n, n=4 for RSI25/75, PowerZones, Vol Panics; n=2 for other standard RSI systems; flat seed=50",
+        "Bollinger_percent_b": "(close-lower)/(upper-lower), SMA5 +/- 1 population standard deviation (ddof=0 assumption); zero width undefined",
+        "Cumulative_RSI": "Sum of current and preceding daily RSI(2), not RSI with a different lookback",
+        "ConnorsRSI": "Mean of price RSI3, signed-streak RSI2, rank of current simple daily return against prior 100 returns; strictly-less rank; ties contribute zero; assumed parameters",
+        "HV": "Sample standard deviation of 100 log daily returns times sqrt(252); decimal units; explicit assumption",
+        "Extrema": "Current bar included; Double7/ten-day use close; New Highs uses high over 252 sessions, occurring within trailing 20 sessions including today"
+      },
+      "entry_rules": "close > 5 AND mean(volume,21) > 1000000 AND trailing20 contains high==rolling_max(high,252) AND ConnorsRSI < 15; next-day buy limit close*(1-limit_pct)",
+      "exit_rules": "ConnorsRSI > 70",
+      "scale_in_rules": "none",
+      "named_variants": [
+        "buy_fear.new_highs",
+        "new_highs10"
+      ]
+    },
+    {
+      "id": "buy_fear.terror_gaps",
+      "name": "Terror Gaps",
+      "sources": [
+        {
+          "document": "buy_fear",
+          "url": "https://docs.google.com/document/d/1MzbEHZr38_fwsD82O456i8YsoCz5A87QVm7S5Gl660Y/edit",
+          "section": 7
+        }
+      ],
+      "direction": "long",
+      "universe": "ETFs including leveraged ETFs",
+      "status": "blocked",
+      "reason": "Reference price unspecified; daily bars cannot validate post-open sequence. No executable implementation.",
+      "parameters": {
+        "pullback": 0.01
+      },
+      "rules": "7. Terror Gaps\nMarket / direction: Long ETFs, including leveraged ETFs; 20-day average daily volume of 250,000 shares.\nSetup: The ETF\u2019s previous closing ConnorsRSI is below 5.\nEntry: The next session opens below the previous close, then sells off further intraday. Buy at the selected additional pullback: 1%, 1.5%, 2%, or 2.5% below the gap-down level. These are separate entry variants.\nExit: Sell on the close when ConnorsRSI closes above 70.\nEntry precision: The book describes the percentage pullback as occurring after the gap-down opening; it does not print a separate entry-price formula.",
+      "comparisons": "Above/below strict; at high/low inclusive; at least >=. See rules.",
+      "signal_timing": "completed daily close",
+      "execution_timing": "source_close idealized or next_open timing variant; next-day limits expire at session end",
+      "sizing": "User-configured planned full notional fixed at episode entry; source unit systems use equal shares; TPS/Vol staged allocations use incremental notional fractions",
+      "assumptions": [
+        "No stops; exit takes precedence over add; at most one stage per close; no same-close re-entry",
+        "SMA/rolling extrema include current bar; preceding volume excludes current bar",
+        "Portfolio sizing and costs are research configuration, not supplied by books"
+      ],
+      "indicator_definitions": {
+        "SMA": "Arithmetic mean, length in sessions, current close included; 200 trend, 5 exit/filter unless specified otherwise",
+        "EMA": "SMA seed then alpha=2/(n+1), 10 and 30 sessions in named EMA variant only",
+        "RSI": "SMA-seeded Wilder smoothing alpha=1/n, n=4 for RSI25/75, PowerZones, Vol Panics; n=2 for other standard RSI systems; flat seed=50",
+        "Bollinger_percent_b": "(close-lower)/(upper-lower), SMA5 +/- 1 population standard deviation (ddof=0 assumption); zero width undefined",
+        "Cumulative_RSI": "Sum of current and preceding daily RSI(2), not RSI with a different lookback",
+        "ConnorsRSI": "Mean of price RSI3, signed-streak RSI2, rank of current simple daily return against prior 100 returns; strictly-less rank; ties contribute zero; assumed parameters",
+        "HV": "Sample standard deviation of 100 log daily returns times sqrt(252); decimal units; explicit assumption",
+        "Extrema": "Current bar included; Double7/ten-day use close; New Highs uses high over 252 sessions, occurring within trailing 20 sessions including today"
+      },
+      "entry_rules": "prior ConnorsRSI < 5; observe gap-down open; further percentage pullback reference unresolved",
+      "exit_rules": "ConnorsRSI > 70",
+      "scale_in_rules": "none",
+      "named_variants": [
+        "buy_fear.terror_gaps"
+      ]
+    },
+    {
+      "id": "blocked.cumulative45_conflict",
+      "status": "blocked",
+      "reason": "Incomplete/conflicting source; see source notes. No guessed runnable rules.",
+      "sources": [
+        {
+          "url": "https://docs.google.com/document/d/1aIOvM_YQpMVRlTOkTYumFFm5qzOdUQizo5ubrBOvaws/edit"
+        }
+      ]
+    },
+    {
+      "id": "blocked.stock_cumulative",
+      "status": "blocked",
+      "reason": "Incomplete/conflicting source; see source notes. No guessed runnable rules.",
+      "sources": [
+        {
+          "url": "https://docs.google.com/document/d/1aIOvM_YQpMVRlTOkTYumFFm5qzOdUQizo5ubrBOvaws/edit"
+        }
+      ]
+    },
+    {
+      "id": "blocked.vix_stretches",
+      "status": "blocked",
+      "reason": "Incomplete/conflicting source; see source notes. No guessed runnable rules.",
+      "sources": [
+        {
+          "url": "https://docs.google.com/document/d/1aIOvM_YQpMVRlTOkTYumFFm5qzOdUQizo5ubrBOvaws/edit"
+        }
+      ]
+    },
+    {
+      "id": "blocked.end_of_month",
+      "status": "blocked",
+      "reason": "Incomplete/conflicting source; see source notes. No guessed runnable rules.",
+      "sources": [
+        {
+          "url": "https://docs.google.com/document/d/1aIOvM_YQpMVRlTOkTYumFFm5qzOdUQizo5ubrBOvaws/edit"
+        }
+      ]
+    },
+    {
+      "id": "blocked.hpe_promotional_systems",
+      "status": "blocked",
+      "reason": "Incomplete/conflicting source; see source notes. No guessed runnable rules.",
+      "sources": [
+        {
+          "url": "https://docs.google.com/document/d/161M2Z5ze16FslfrpoesJEQpSwBll5RS8KBR9I3dAop8/edit"
+        }
+      ]
+    },
+    {
+      "id": "blocked.tps235",
+      "status": "blocked",
+      "reason": "Incomplete/conflicting source; see source notes. No guessed runnable rules.",
+      "sources": [
+        {
+          "url": "https://docs.google.com/document/d/161M2Z5ze16FslfrpoesJEQpSwBll5RS8KBR9I3dAop8/edit"
+        }
+      ]
+    },
+    {
+      "id": "blocked.multiple_days_4_or_5_of_6",
+      "status": "blocked",
+      "reason": "Mentioned variation does not settle exactly 4/5 vs at least4 inclusion of six declining days; primary four-of-five remains runnable",
+      "sources": [
+        {
+          "document": "hpe",
+          "url": "https://docs.google.com/document/d/161M2Z5ze16FslfrpoesJEQpSwBll5RS8KBR9I3dAop8/edit"
+        }
+      ]
+    }
+  ],
+  "variants": {
+    "hpe.high_low.long": {
+      "strategy": "hpe.high_low.long",
+      "parameters": {
+        "aggressive": false
+      }
+    },
+    "hpe.high_low.long.aggressive": {
+      "strategy": "hpe.high_low.long",
+      "parameters": {
+        "aggressive": true
+      }
+    },
+    "hpe.rsi4.long": {
+      "strategy": "hpe.rsi4.long",
+      "parameters": {
+        "aggressive": false,
+        "entry": 25,
+        "add": 20,
+        "exit": 55
+      }
+    },
+    "hpe.rsi4.long.aggressive": {
+      "strategy": "hpe.rsi4.long",
+      "parameters": {
+        "aggressive": true,
+        "entry": 25,
+        "add": 20,
+        "exit": 55
+      }
+    },
+    "hpe.r3.long": {
+      "strategy": "hpe.r3.long",
+      "parameters": {
+        "aggressive": false,
+        "r3_interpretation": "first_declining_reading"
+      }
+    },
+    "hpe.r3.long.aggressive": {
+      "strategy": "hpe.r3.long",
+      "parameters": {
+        "aggressive": true,
+        "r3_interpretation": "first_declining_reading"
+      }
+    },
+    "hpe.percent_b.long": {
+      "strategy": "hpe.percent_b.long",
+      "parameters": {
+        "aggressive": false,
+        "length": 5,
+        "std": 1,
+        "ddof": 0
+      }
+    },
+    "hpe.percent_b.long.aggressive": {
+      "strategy": "hpe.percent_b.long",
+      "parameters": {
+        "aggressive": true,
+        "length": 5,
+        "std": 1,
+        "ddof": 0
+      }
+    },
+    "hpe.multiple_days.long": {
+      "strategy": "hpe.multiple_days.long",
+      "parameters": {
+        "aggressive": false,
+        "window": 5,
+        "count": 4
+      }
+    },
+    "hpe.multiple_days.long.aggressive": {
+      "strategy": "hpe.multiple_days.long",
+      "parameters": {
+        "aggressive": true,
+        "window": 5,
+        "count": 4
+      }
+    },
+    "hpe.rsi2_scale.long": {
+      "strategy": "hpe.rsi2_scale.long",
+      "parameters": {
+        "aggressive": false,
+        "entry": 10,
+        "add": 6
+      }
+    },
+    "hpe.tps.long": {
+      "strategy": "hpe.tps.long",
+      "parameters": {
+        "aggressive": false
+      }
+    },
+    "hpe.high_low.short": {
+      "strategy": "hpe.high_low.short",
+      "parameters": {
+        "aggressive": false
+      }
+    },
+    "hpe.high_low.short.aggressive": {
+      "strategy": "hpe.high_low.short",
+      "parameters": {
+        "aggressive": true
+      }
+    },
+    "hpe.rsi4.short": {
+      "strategy": "hpe.rsi4.short",
+      "parameters": {
+        "aggressive": false,
+        "entry": 75,
+        "add": 80,
+        "exit": 45
+      }
+    },
+    "hpe.rsi4.short.aggressive": {
+      "strategy": "hpe.rsi4.short",
+      "parameters": {
+        "aggressive": true,
+        "entry": 75,
+        "add": 80,
+        "exit": 45
+      }
+    },
+    "hpe.r3.short": {
+      "strategy": "hpe.r3.short",
+      "parameters": {
+        "aggressive": false,
+        "r3_interpretation": "first_declining_reading"
+      }
+    },
+    "hpe.r3.short.aggressive": {
+      "strategy": "hpe.r3.short",
+      "parameters": {
+        "aggressive": true,
+        "r3_interpretation": "first_declining_reading"
+      }
+    },
+    "hpe.percent_b.short": {
+      "strategy": "hpe.percent_b.short",
+      "parameters": {
+        "aggressive": false,
+        "length": 5,
+        "std": 1,
+        "ddof": 0
+      }
+    },
+    "hpe.percent_b.short.aggressive": {
+      "strategy": "hpe.percent_b.short",
+      "parameters": {
+        "aggressive": true,
+        "length": 5,
+        "std": 1,
+        "ddof": 0
+      }
+    },
+    "hpe.multiple_days.short": {
+      "strategy": "hpe.multiple_days.short",
+      "parameters": {
+        "aggressive": false,
+        "window": 5,
+        "count": 4
+      }
+    },
+    "hpe.multiple_days.short.aggressive": {
+      "strategy": "hpe.multiple_days.short",
+      "parameters": {
+        "aggressive": true,
+        "window": 5,
+        "count": 4
+      }
+    },
+    "hpe.rsi2_scale.short": {
+      "strategy": "hpe.rsi2_scale.short",
+      "parameters": {
+        "aggressive": false,
+        "entry": 90,
+        "add": 94
+      }
+    },
+    "hpe.tps.short": {
+      "strategy": "hpe.tps.short",
+      "parameters": {
+        "aggressive": false
+      }
+    },
+    "short_term.rsi2": {
+      "strategy": "short_term.rsi2",
+      "parameters": {}
+    },
+    "short_term.cumulative": {
+      "strategy": "short_term.cumulative",
+      "parameters": {
+        "threshold": 35
+      }
+    },
+    "short_term.double7": {
+      "strategy": "short_term.double7",
+      "parameters": {}
+    },
+    "short_term.vix": {
+      "strategy": "short_term.vix",
+      "parameters": {}
+    },
+    "short_term.trin": {
+      "strategy": "short_term.trin",
+      "parameters": {}
+    },
+    "short_term.sp_short": {
+      "strategy": "short_term.sp_short",
+      "parameters": {}
+    },
+    "short_term.ten_day": {
+      "strategy": "short_term.ten_day",
+      "parameters": {}
+    },
+    "short_term.overnight": {
+      "strategy": "short_term.overnight",
+      "parameters": {}
+    },
+    "buy_fear.powerzones": {
+      "strategy": "buy_fear.powerzones",
+      "parameters": {
+        "entry": 30,
+        "add": 25,
+        "exit": 55
+      }
+    },
+    "buy_fear.crash": {
+      "strategy": "buy_fear.crash",
+      "parameters": {
+        "limit_pct": 0.03,
+        "exit": 30,
+        "hv_min": 1.0
+      }
+    },
+    "buy_fear.vol_panics": {
+      "strategy": "buy_fear.vol_panics",
+      "parameters": {
+        "stages": [
+          1.0
+        ],
+        "exit_kind": "sma"
+      }
+    },
+    "buy_fear.vxx_trend": {
+      "strategy": "buy_fear.vxx_trend",
+      "parameters": {
+        "ma": "sma"
+      }
+    },
+    "buy_fear.new_highs": {
+      "strategy": "buy_fear.new_highs",
+      "parameters": {
+        "limit_pct": 0.07
+      }
+    },
+    "buy_fear.terror_gaps": {
+      "strategy": "buy_fear.terror_gaps",
+      "parameters": {
+        "pullback": 0.01
+      }
+    },
+    "cumulative50": {
+      "strategy": "short_term.cumulative",
+      "parameters": {
+        "threshold": 50
+      }
+    },
+    "powerzones25": {
+      "strategy": "hpe.rsi4.long",
+      "parameters": {
+        "aggressive": true,
+        "entry": 25,
+        "add": 20,
+        "exit": 55
+      }
+    },
+    "tps_volume_long": {
+      "strategy": "hpe.tps.long",
+      "parameters": {
+        "aggressive": false,
+        "volume_filter": true
+      }
+    },
+    "tps_volume_short": {
+      "strategy": "hpe.tps.short",
+      "parameters": {
+        "aggressive": false,
+        "volume_filter": true
+      }
+    },
+    "vol_double": {
+      "strategy": "buy_fear.vol_panics",
+      "parameters": {
+        "stages": [
+          0.5,
+          0.5
+        ],
+        "exit_kind": "sma",
+        "equal_units": true
+      }
+    },
+    "vol235": {
+      "strategy": "buy_fear.vol_panics",
+      "parameters": {
+        "stages": [
+          0.2,
+          0.3,
+          0.5
+        ],
+        "exit_kind": "sma"
+      }
+    },
+    "vol1234": {
+      "strategy": "buy_fear.vol_panics",
+      "parameters": {
+        "stages": [
+          0.1,
+          0.2,
+          0.3,
+          0.4
+        ],
+        "exit_kind": "sma"
+      }
+    },
+    "vol_rsi_exit": {
+      "strategy": "buy_fear.vol_panics",
+      "parameters": {
+        "stages": [
+          1.0
+        ],
+        "exit_kind": "rsi"
+      }
+    },
+    "vxx_ema": {
+      "strategy": "buy_fear.vxx_trend",
+      "parameters": {
+        "ma": "ema"
+      }
+    },
+    "crash5": {
+      "strategy": "buy_fear.crash",
+      "parameters": {
+        "limit_pct": 0.05,
+        "exit": 30,
+        "hv_min": 1.0
+      }
+    },
+    "crash_exit20": {
+      "strategy": "buy_fear.crash",
+      "parameters": {
+        "limit_pct": 0.03,
+        "exit": 20,
+        "hv_min": 1.0
+      }
+    },
+    "crash_hv60": {
+      "strategy": "buy_fear.crash",
+      "parameters": {
+        "limit_pct": 0.03,
+        "exit": 30,
+        "hv_min": 0.6
+      }
+    },
+    "crash_hv80": {
+      "strategy": "buy_fear.crash",
+      "parameters": {
+        "limit_pct": 0.03,
+        "exit": 30,
+        "hv_min": 0.8
+      }
+    },
+    "new_highs10": {
+      "strategy": "buy_fear.new_highs",
+      "parameters": {
+        "limit_pct": 0.1
+      }
+    },
+    "rsi2_10_7": {
+      "strategy": "hpe.rsi2_scale.long",
+      "parameters": {
+        "entry": 10,
+        "add": 7
+      }
+    },
+    "rsi2_9_4": {
+      "strategy": "hpe.rsi2_scale.long",
+      "parameters": {
+        "entry": 9,
+        "add": 4
+      }
+    },
+    "rsi2_5_2": {
+      "strategy": "hpe.rsi2_scale.long",
+      "parameters": {
+        "entry": 5,
+        "add": 2
+      }
+    }
+  }
+}

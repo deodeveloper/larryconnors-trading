@@ -1,0 +1,14 @@
+{
+  "hpe.md": {
+    "sha256": "d8c5e110ae5a8a8ff168e5917e90019d6879721f12923c0c8e43ffb94d270911",
+    "snapshot_date": "2026-10-23 America/Los_Angeles"
+  },
+  "short_term.md": {
+    "sha256": "33e99fc3c7ea86daa704f03f3c68084b154b77375124921dc5d2fba9ad57b197",
+    "snapshot_date": "2026-10-23 America/Los_Angeles"
+  },
+  "buy_fear.md": {
+    "sha256": "9858bb191c4df525cc1db5e734599835e8fe745b564922e32e833c9c067d60c0",
+    "snapshot_date": "2026-10-23 America/Los_Angeles"
+  }
+}
