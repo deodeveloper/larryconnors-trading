@@ -7,6 +7,21 @@ A modular Python research framework built from the three Google Docs saved in
 Uses **Alpaca historical bars**, **pandas-ta-classic**, **vectorbt**, and
 **Plotly Express**. There is no live-order submission code.
 
+## Current entry/exit scanner
+
+Open [strategy_scanner.ipynb](notebooks/strategy_scanner.ipynb) in local Jupyter or
+Colab. Enter one ticker or a list; it scans the three books for current entry/exit
+conditions and recent entries without a later exit (latest session plus previous
+three by default). Separate cells provide `scanner.scan_core_etfs()` for
+SPY/QQQ/SOXX/GLD and `scanner.scan_volatility()` for VXX and VIX-conditioned SPY
+signals. Actual VIX CSV data is required; VIX is never replaced with VXX.
+
+Today's available partial bar is explicitly provisional. Missing current bars,
+blocked strategies and missing index data produce visible reasons. This is a
+hypothetical setup screen, not a broker holdings monitor. See the notebook's
+Markdown sections for timing, limit fills, scheduled exits, universe experiments
+and experimental-strategy assumptions. Tables and dark charts share package code.
+
 ## Start here: one notebook per book
 
 Open any of these notebooks **locally or in Google Colab**. Run Setup, provide

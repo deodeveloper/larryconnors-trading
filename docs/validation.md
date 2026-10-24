@@ -1,5 +1,21 @@
 # Validation record
 
+## Strategy scanner notebook
+
+All 68 project tests passed after adding 15 scanner cases. Coverage includes
+trading-session ages, exits canceling older entries, same-bar exit precedence,
+overnight and five-session scheduled exits, pending/expired DAY limits, opening
+price improvement, holidays, early closes, premarket status, core ETF routing,
+VIX/VXX separation, auxiliary coverage and visible data failures.
+
+`python tools/validate_scanner_notebook.py` executed the complete new notebook
+in a real local Jupyter kernel with mocked Alpaca SDK responses. All three scan
+sections, table rendering, Plotly rich outputs and CSV/JSON exports passed.
+The mock cache and executed notebook are isolated under ignored
+`reports/scanner-validation/`; delivered notebooks contain no outputs or keys.
+These checks use synthetic data, not current market signals. Authenticated
+Alpaca calls and hosted Colab execution were not performed.
+
 ## Warm-up coverage fix
 
 52 tests passed, including six new coverage cases: a 237-session unavailable

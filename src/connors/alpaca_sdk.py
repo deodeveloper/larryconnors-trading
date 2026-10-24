@@ -78,6 +78,7 @@ class AlpacaDailyData:
         adjustment="split",
         warmup_sessions=600,
         refresh=False,
+        as_of=None,
     ):
         symbol = normalize_symbols(symbol)[0]
         start, end = pd.Timestamp(start_date), pd.Timestamp(end_date)
@@ -97,6 +98,12 @@ class AlpacaDailyData:
                 "Use split or all adjusted research prices; raw corporate-action accounting is unsupported"
             )
         first = warmup_start(start_date, warmup_sessions)
+        cutoff = None if as_of is None else pd.Timestamp(as_of)
+        if cutoff is not None and cutoff.tz is None:
+            raise ValueError("as_of must be timezone-aware")
+        request_end = (end + pd.Timedelta(days=1)).tz_localize("America/New_York")
+        if cutoff is not None:
+            request_end = min(request_end, cutoff)
         request_key = dict(
             symbol=symbol,
             start=first,
@@ -105,6 +112,7 @@ class AlpacaDailyData:
             adjustment=adjustment,
             timeframe="1Day",
             adapter="alpaca-py-0.44.0",
+            as_of=None if cutoff is None else cutoff.isoformat(),
         )
         key = hashlib.sha256(
             json.dumps(request_key, sort_keys=True).encode()
@@ -119,9 +127,7 @@ class AlpacaDailyData:
                 start=pd.Timestamp(first)
                 .tz_localize("America/New_York")
                 .to_pydatetime(),
-                end=(end + pd.Timedelta(days=1))
-                .tz_localize("America/New_York")
-                .to_pydatetime(),
+                end=request_end.to_pydatetime(),
                 feed=DataFeed(feed),
                 adjustment=Adjustment(adjustment),
             )
